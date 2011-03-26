@@ -63,7 +63,30 @@ package com.leisure.energyjam.blocks
 		public function set type(value:String):void
 		{
 			_type = value;
+			
+			if(type == WHITE)
+			{
+				energyChange = 20;
+			}else if(type == BLACK)
+			{
+				energyChange = -20;
+			}else{
+				energyChange = 0;
+			}
 		}
+		
+		private var _energyChange:Number = 0;
+
+		public function get energyChange():Number
+		{
+			return _energyChange;
+		}
+
+		public function set energyChange(value:Number):void
+		{
+			_energyChange = value;
+		}
+
 		
 		public function Block(type:String=GREY)
 		{

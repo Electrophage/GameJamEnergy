@@ -20,7 +20,7 @@ package com.leisure.energyjam.person
 		
 		private static const NONE_COLOR:int = 0xff8800;
 		
-		public static const MAX_ENERGY:Number = 500;
+		public static const MAX_ENERGY:Number = 300;
 		
 		public static const DESIRED_WIDTH:int = 100;
 		public static const DESIRED_HEIGHT:int = 100;
@@ -95,12 +95,12 @@ package com.leisure.energyjam.person
 
 		public function set energy(value:Number):void
 		{
-			_energy = value;
+			_energy = value > MAX_ENERGY ? MAX_ENERGY : value;
 		}
 
 		public function step():void
 		{
-			if( energy == 0 )
+			if( energy <= 0 )
 			{
 				direction = NONE;
 				drawDirection();

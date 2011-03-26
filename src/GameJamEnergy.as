@@ -2,6 +2,7 @@ package
 {
 	import com.leisure.energyjam.blocks.Block;
 	import com.leisure.energyjam.eventz.MovementEvent;
+	import com.leisure.energyjam.gui.EnergyGuage;
 	import com.leisure.energyjam.person.TestSubject;
 	import com.leisure.energyjam.room.TestChamber;
 	
@@ -10,6 +11,9 @@ package
 	import flash.events.KeyboardEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
+	import flash.media.Sound;
+	import flash.media.SoundChannel;
+	import flash.net.URLRequest;
 	import flash.ui.Keyboard;
 	
 	[SWF(width="500", height="500", backgroundColor='#000000', frameRate='30')]
@@ -19,9 +23,18 @@ package
 		public static const WIDTH:int = 500;
 		private var chamber:TestChamber;
 		private var subject:TestSubject;
+		private var gauge:EnergyGuage;
+		
+		private var musicSource:String = "assets/music/GameJam2.mp3";
+		private var music:Sound;
+		
+		private var musicChannel:SoundChannel;
 		
 		public function GameJamEnergy()
 		{
+			var musicReq:URLRequest = new URLRequest(musicSource);
+			music = new Sound();
+			music.load(musicReq);
 			addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
 		}
 		
@@ -43,26 +56,40 @@ package
 			subject.y = HEIGHT/2.0 - subject.height/2.0;
 			subject.addEventListener(MovementEvent.MOVE, handleMove);
 			
+			gauge = new EnergyGuage();
+			gauge.width = 20;
+			gauge.height = TestSubject.MAX_ENERGY;
+			gauge.x = 20;
+			gauge.y = 20;
+			gauge.energy = subject.energy;
+			
 			var block:Block = new Block(Block.RED_UP);
-			block.x = chamber.width/2.0 + 20;
-			block.y = chamber.height/2.0 + 20;
-			chamber.addBlock(block);
+			chamber.addBlockAt(block, 100, 100);
 			
 			block = new Block(Block.GREEN_LEFT);
-			block.x = chamber.width/2.0 + 60;
-			block.y = chamber.height/2.0 + 60;
-			chamber.addBlock(block);
+			chamber.addBlockAt(block, 110, 110);
 			
 			block = new Block(Block.BLUE_DOWN);
-			block.x = chamber.width/2.0 - 40;
-			block.y = chamber.height/2.0 - 40;
-			chamber.addBlock(block);
+			chamber.addBlockAt(block, 120, 120);
 			
 			block = new Block(Block.YELLOW_RIGHT);
 			chamber.addBlockAt(block, 130, 130);
 			
+			for(var i:int=0;i<250;++i)
+			{
+				chamber.addBlockAt(new Block(Block.WHITE), i, 150);
+			}
+			
+			for(var i:int=0;i<250;++i)
+			{
+				chamber.addBlockAt(new Block(Block.BLACK), i, 170);
+			}
+			
 			addChild(chamber);
 			addChild(subject);
+			addChild(gauge);
+			gauge.width = 20;
+			gauge.height = TestSubject.MAX_ENERGY;
 			
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressHandler);
 			addEventListener(Event.ENTER_FRAME, enterFrameHandler);
@@ -75,6 +102,9 @@ package
 		
 		private function keyPressHandler(e:KeyboardEvent):void
 		{
+			if(musicChannel == null)
+				musicChannel = music.play(0,999);
+			
 			switch(e.keyCode)
 			{
 				case Keyboard.UP:
@@ -102,6 +132,7 @@ package
 				moveField(subject.direction, subject.speed);
 				doIntersections();
 			}
+			gauge.energy = subject.energy;
 		}
 		
 		/**
@@ -128,6 +159,7 @@ package
 					{
 						if(block.brokenByDirection(subject.direction))
 						{
+							subject.energy += block.energyChange;
 							chamber.removeBlock(block);
 							continue;
 						}else{
