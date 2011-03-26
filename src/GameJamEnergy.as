@@ -9,6 +9,7 @@ package
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	import flash.ui.Keyboard;
 	
 	[SWF(width="500", height="500", backgroundColor='#000000', frameRate='30')]
@@ -42,11 +43,23 @@ package
 			subject.y = HEIGHT/2.0 - subject.height/2.0;
 			subject.addEventListener(MovementEvent.MOVE, handleMove);
 			
-			var block:Block = new Block(Block.RED);
-			chamber.addChild(block);
+			var block:Block = new Block(Block.RED_UP);
 			block.x = chamber.width/2.0 + 20;
 			block.y = chamber.height/2.0 + 20;
+			chamber.addBlock(block);
 			
+			block = new Block(Block.GREEN_LEFT);
+			block.x = chamber.width/2.0 + 60;
+			block.y = chamber.height/2.0 + 60;
+			chamber.addBlock(block);
+			
+			block = new Block(Block.BLUE_DOWN);
+			block.x = chamber.width/2.0 - 40;
+			block.y = chamber.height/2.0 - 40;
+			chamber.addBlock(block);
+			
+			block = new Block(Block.YELLOW_RIGHT);
+			chamber.addBlockAt(block, 130, 130);
 			
 			addChild(chamber);
 			addChild(subject);
@@ -84,16 +97,101 @@ package
 		
 		private function handleMove(e:MovementEvent):void
 		{
-			moveField(subject.direction, subject.speed);
+			if(doIntersections())
+			{
+				moveField(subject.direction, subject.speed);
+				doIntersections();
+			}
+		}
+		
+		/**
+		 * 
+		 * @return Whether or not to continue on to moving after this is called 
+		 * 
+		 */		
+		private function doIntersections():Boolean
+		{
+			var blocks:Array = chamber.blocksInArea(new Point(0,0), WIDTH, HEIGHT);
+			var block:Block;
+			var blockBounds:Rectangle;
+			var blockOrigin:Point;
+			var subjectOrigin:Point = new Point(subject.x,subject.y);
+			
+			for(var i:int=0; i<blocks.length; ++i)
+			{
+				block = blocks[i];
+				if(subject.overlapsBlock(block))
+				{
+					blockBounds = block.getBounds(this);
+					blockOrigin = blockBounds.topLeft;
+					if(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
+					{
+						if(block.brokenByDirection(subject.direction))
+						{
+							chamber.removeBlock(block);
+							continue;
+						}else{
+							subjectEvenWithBlock(block);
+							return false;
+						}
+					}
+				}
+			}
+			
+			return true;
+		}
+		
+		private function subjectEvenWithBlock(block:Block):void
+		{
+			var subjectOrigin:Point = new Point(subject.x,subject.y);
+			var blockOrigin:Point = block.getBounds(this).topLeft;
+			
+			switch(subject.direction)
+			{
+				case TestSubject.UP:
+					subjectOrigin.y++;
+					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
+					{
+						subjectOrigin.y++;
+					}
+					subject.y = subjectOrigin.y;
+					
+					break;
+				
+				case TestSubject.DOWN:
+					subjectOrigin.y--;
+					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
+					{
+						subjectOrigin.y--;
+					}
+					subject.y = subjectOrigin.y;
+					
+					break;
+				
+				case TestSubject.RIGHT:
+					subjectOrigin.x--;
+					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
+					{
+						subjectOrigin.x--;
+					}
+					subject.x = subjectOrigin.x;
+					
+					break;
+				
+				case TestSubject.LEFT:
+					subjectOrigin.x++;
+					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
+					{
+						subjectOrigin.x++;
+					}
+					subject.x = subjectOrigin.x;
+					
+					break
+			}
 		}
 		
 		private function moveField(direction:String, speed:Number):void
 		{
-			/*if(chamber.level.bitmapData.hitTest(new Point(chamber.x, chamber.y),255,
-						subject.getBounds(this), new Point(subject.x, subject.y), 255))
-			{
-				return;
-			}*/
 			switch(direction)
 			{
 				case TestSubject.UP:

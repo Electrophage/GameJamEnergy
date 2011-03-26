@@ -1,14 +1,16 @@
 package com.leisure.energyjam.blocks
 {
+	import com.leisure.energyjam.person.TestSubject;
+	
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	
 	public class Block extends Sprite
 	{
-		public static const RED:String = "blood";
-		public static const GREEN:String = "GREEEN!";
-		public static const BLUE:String = "balls";
-		public static const YELLOW:String = "piss";
+		public static const RED_UP:String = "blood";
+		public static const GREEN_LEFT:String = "GREEEN!";
+		public static const BLUE_DOWN:String = "balls";
+		public static const YELLOW_RIGHT:String = "piss";
 		public static const WHITE:String = "NRG";
 		public static const BLACK:String = "drain";
 		public static const RAINBOW:String = "unicorns";
@@ -74,24 +76,49 @@ package com.leisure.energyjam.blocks
 			addChild(skin);
 		}
 		
+		public function brokenByDirection(direction:String):Boolean
+		{
+			switch(type)
+			{
+				case RED_UP:
+					return direction == TestSubject.UP;
+				
+				case GREEN_LEFT:
+					return direction == TestSubject.LEFT;
+					
+				case BLUE_DOWN:
+					return direction == TestSubject.DOWN;
+					
+				case YELLOW_RIGHT:
+					return direction == TestSubject.RIGHT;
+					
+				case WHITE:
+				case BLACK:
+					return true;
+					
+				default:
+					return false;
+			}
+		}
+		
 		protected function get skinClassForType():Class
 		{
 			var skinClass:Class;
 			switch(type)
 			{
-				case RED:
+				case RED_UP:
 					skinClass = redSkinClass;
 					break;
 				
-				case BLUE:
+				case BLUE_DOWN:
 					skinClass = blueSkinClass;
 					break;
 				
-				case GREEN:
+				case GREEN_LEFT:
 					skinClass = greenSkinClass;
 					break;
 				
-				case YELLOW:
+				case YELLOW_RIGHT:
 					skinClass = yellowSkinClass;
 					break;
 				

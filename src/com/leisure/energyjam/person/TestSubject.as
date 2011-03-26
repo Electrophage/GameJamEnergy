@@ -1,9 +1,11 @@
 package com.leisure.energyjam.person
 {
+	import com.leisure.energyjam.blocks.Block;
 	import com.leisure.energyjam.eventz.MovementEvent;
 	
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
+	import flash.geom.Rectangle;
 	
 	import mx.core.mx_internal;
 	import mx.events.MoveEvent;
@@ -111,6 +113,14 @@ package com.leisure.energyjam.person
 				--energy;
 				dispatchEvent(new MovementEvent(MovementEvent.MOVE));
 			}
+		}
+		
+		public function overlapsBlock(block:Block):Boolean
+		{
+			var blockBounds:Rectangle = block.getBounds(this.parent);
+			var myBounds:Rectangle = getBounds(this.parent);
+			
+			return myBounds.intersects(blockBounds);
 		}
 		
 		private function drawDirection():void
