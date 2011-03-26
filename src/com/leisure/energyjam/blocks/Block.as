@@ -71,11 +71,11 @@ package com.leisure.energyjam.blocks
 			{
 				energyChange = -20;
 			}else{
-				energyChange = 0;
+				energyChange = 1;
 			}
 		}
 		
-		private var _energyChange:Number = 0;
+		private var _energyChange:Number = 1;
 
 		public function get energyChange():Number
 		{

@@ -15,9 +15,6 @@ package com.leisure.energyjam.room
 		[Embed(source="assets/background.jpg")]
 		private var backgroundClass:Class;
 		
-		[Embed(source="assets/level01.png")]
-		private var levelClass:Class;
-		
 		private var background:Bitmap;
 		
 		private var _blocks:Array;
@@ -31,19 +28,6 @@ package com.leisure.energyjam.room
 		{
 			_blocks = value;
 		}
-		
-		private var _level:Bitmap;
-
-		public function get level():Bitmap
-		{
-			return _level;
-		}
-
-		public function set level(value:Bitmap):void
-		{
-			_level = value;
-		}
-
 		
 		public function TestChamber()
 		{
@@ -111,9 +95,6 @@ package com.leisure.energyjam.room
 		{
 			background = new backgroundClass();
 			addChild(background);
-			
-			level = new levelClass();
-			addChild(level);
 		}
 		
 		private function initBlockSpace():void
