@@ -75,12 +75,13 @@ package
 			block = new Block(Block.YELLOW_RIGHT);
 			chamber.addBlockAt(block, 130, 130);
 			
-			for(var i:int=0;i<250;++i)
+			var i:int;
+			for(i=0;i<250;++i)
 			{
 				chamber.addBlockAt(new Block(Block.WHITE), i, 150);
 			}
 			
-			for(var i:int=0;i<250;++i)
+			for(i=0;i<250;++i)
 			{
 				chamber.addBlockAt(new Block(Block.BLACK), i, 170);
 			}
