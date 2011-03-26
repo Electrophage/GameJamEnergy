@@ -1,14 +1,15 @@
 package
 {
+	import com.leisure.energyjam.blocks.Block;
+	import com.leisure.energyjam.eventz.MovementEvent;
 	import com.leisure.energyjam.person.TestSubject;
 	import com.leisure.energyjam.room.TestChamber;
 	
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
+	import flash.geom.Point;
 	import flash.ui.Keyboard;
-	
-	import mx.events.MoveEvent;
 	
 	[SWF(width="500", height="500", backgroundColor='#000000', frameRate='30')]
 	public class GameJamEnergy extends Sprite
@@ -31,15 +32,21 @@ package
 			chamber = new TestChamber();
 			chamber.height = TestChamber.DESIRED_HEIGHT;
 			chamber.width = TestChamber.DESIRED_WIDTH;
-			chamber.x = -chamber.width/2.0;
-			chamber.y = -chamber.height/2.0;
+			chamber.x = -chamber.width/2.0 + WIDTH/2.0;
+			chamber.y = -chamber.height/2.0 + HEIGHT/2.0;
 			
 			subject = new TestSubject();
 			subject.width = TestSubject.DESIRED_WIDTH;
 			subject.height = TestSubject.DESIRED_HEIGHT;
 			subject.x = WIDTH/2.0 - subject.width/2.0;
 			subject.y = HEIGHT/2.0 - subject.height/2.0;
-			subject.addEventListener(MoveEvent.MOVE, handleMove);
+			subject.addEventListener(MovementEvent.MOVE, handleMove);
+			
+			var block:Block = new Block(Block.RED);
+			chamber.addChild(block);
+			block.x = chamber.width/2.0 + 20;
+			block.y = chamber.height/2.0 + 20;
+			
 			
 			addChild(chamber);
 			addChild(subject);
@@ -75,13 +82,18 @@ package
 			}
 		}
 		
-		private function handleMove(e:MoveEvent):void
+		private function handleMove(e:MovementEvent):void
 		{
 			moveField(subject.direction, subject.speed);
 		}
 		
 		private function moveField(direction:String, speed:Number):void
 		{
+			/*if(chamber.level.bitmapData.hitTest(new Point(chamber.x, chamber.y),255,
+						subject.getBounds(this), new Point(subject.x, subject.y), 255))
+			{
+				return;
+			}*/
 			switch(direction)
 			{
 				case TestSubject.UP:

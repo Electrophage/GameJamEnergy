@@ -1,5 +1,8 @@
 package com.leisure.energyjam.person
 {
+	import com.leisure.energyjam.eventz.MovementEvent;
+	
+	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	
 	import mx.core.mx_internal;
@@ -13,22 +16,47 @@ package com.leisure.energyjam.person
 		public static const RIGHT:String = "right";
 		public static const NONE:String = "none";
 		
-		private static const UP_COLOR:int = 0xff0000;
-		private static const DOWN_COLOR:int = 0x0000ff;
-		private static const LEFT_COLOR:int = 0x00ff00;
-		private static const RIGHT_COLOR:int = 0xffff00;
 		private static const NONE_COLOR:int = 0xff8800;
 		
-		public static const MAX_ENERGY:Number = 100;
+		public static const MAX_ENERGY:Number = 500;
 		
-		public static const DESIRED_WIDTH:int = 25;
-		public static const DESIRED_HEIGHT:int = 25;
+		public static const DESIRED_WIDTH:int = 100;
+		public static const DESIRED_HEIGHT:int = 100;
+		
+		[Embed(source="assets/gloves/gloves_red_up.png")]
+		private var upSkinClass:Class;
+		
+		[Embed(source="assets/gloves/gloves_blue_down.png")]
+		private var downSkinClass:Class;
+		
+		[Embed(source="assets/gloves/gloves_green_left.png")]
+		private var leftSkinClass:Class;
+		
+		[Embed(source="assets/gloves/gloves_yellow_right.png")]
+		private var rightSkinClass:Class;
+		
+		[Embed(source="assets/gloves/gloves_white_stop.png")]
+		private var noneSkinClass:Class;
+		
+		private var _skin:Bitmap;
+
+		public function get skin():Bitmap
+		{
+			return _skin;
+		}
+
+		public function set skin(value:Bitmap):void
+		{
+			_skin = value;
+		}
+
 		
 		public function TestSubject()
 		{
 			super();
 			direction = NONE;
-			speed = 80;
+			speed = 20;
+			energy = MAX_ENERGY;
 			drawDirection();
 		}
 		
@@ -73,45 +101,54 @@ package com.leisure.energyjam.person
 			if( energy == 0 )
 			{
 				direction = NONE;
-			}else{
-				--energy;
+				drawDirection();
 			}
 			
 			drawDirection();
-			dispatchEvent(new MoveEvent(MoveEvent.MOVE));
+			
+			if(direction != NONE)
+			{
+				--energy;
+				dispatchEvent(new MovementEvent(MovementEvent.MOVE));
+			}
 		}
 		
 		private function drawDirection():void
 		{
-			var color:int;
-			graphics.clear();
-			
+			removeAllChildren();
+			var skinClass:Class;
 			switch(direction)
 			{
 				case UP:
-					color = UP_COLOR;
+					skinClass = upSkinClass;
 					break
 				
 				case DOWN:
-					color = DOWN_COLOR;
+					skinClass = downSkinClass;
 					break;
 				
 				case RIGHT:
-					color = RIGHT_COLOR;
+					skinClass = rightSkinClass;
 					break;
 				
 				case LEFT:
-					color = LEFT_COLOR;
+					skinClass = leftSkinClass;
 					break;
 				
 				case NONE:
-					color = NONE_COLOR;
-					break;
+					skinClass = noneSkinClass;
 			}
 			
-			graphics.beginFill(color);
-			graphics.drawRect(0,0,DESIRED_WIDTH,DESIRED_HEIGHT);
-			graphics.endFill();
+			skin = new skinClass();
+			addChild(skin);
+		}
+		
+		private function removeAllChildren():void
+		{
+			for(var i:int=numChildren-1;i>=0;--i)
+			{
+				removeChildAt(i);
+			}
 		}
 	}
 }
