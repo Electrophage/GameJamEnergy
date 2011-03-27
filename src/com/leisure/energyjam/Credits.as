@@ -57,7 +57,6 @@ package com.leisure.energyjam
 			_nextButton = value;
 		}
 
-
 		public function Credits()
 		{
 			super();

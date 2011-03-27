@@ -99,6 +99,54 @@ package com.leisure.energyjam.room
 			blocks[index.x][index.y] = null;
 		}
 		
+		public function createLittleNegative(loc:Point):void
+		{
+			//from big chunks to single indices
+			loc.x*=5;
+			loc.y*=5;
+			//middle of chunk
+			loc.x+=2;
+			loc.y+=2;
+			addBlockAt(new Block(Block.BLACK),loc.x,loc.y);
+		}
+		
+		public function createOreo(loc:Point):void
+		{
+			loc.x*=5;
+			loc.y*=5;
+			loc.x+=2;
+			loc.y+=1;
+			addBlockAt(new Block(Block.BLACK),loc.x,loc.y);
+			loc.y+=1;
+			addBlockAt(new Block(Block.WHITE),loc.x,loc.y);
+			loc.y+=1;
+			addBlockAt(new Block(Block.BLACK),loc.x,loc.y);
+		}
+		
+		public function createLittlePlus(loc:Point):void
+		{
+			//from big chunks to single indices
+			loc.x*=5;
+			loc.y*=5;
+			//middle of chunk
+			loc.x+=2;
+			loc.y+=2;
+			addBlockAt(new Block(Block.WHITE),loc.x,loc.y);
+		}
+		
+		public function createBigPlus(loc:Point):void
+		{
+			loc.x*=5;
+			loc.y*=5;
+			loc.x+=2;
+			loc.y+=2;
+			addBlockAt(new Block(Block.WHITE),loc.x,loc.y);
+			addBlockAt(new Block(Block.WHITE),loc.x,loc.y-1);
+			addBlockAt(new Block(Block.WHITE),loc.x,loc.y+1);
+			addBlockAt(new Block(Block.WHITE),loc.x-1,loc.y);
+			addBlockAt(new Block(Block.WHITE),loc.x+1,loc.y);
+		}
+		
 		public function createBlockOfBlocks(loc:Point, type:String):void
 		{
 			var hStep:int=1;

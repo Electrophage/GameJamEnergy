@@ -41,8 +41,12 @@ package com.leisure.energyjam.person
 		private var upSkinClass3:Class;
 		[Embed(source="assets/gloves/gloves_red_up04.png")]
 		private var upSkinClass4:Class;
-		[Embed(source="assets/gloves/overlays/overlay_red_up.png")]
-		private var upOverlayClass:Class;
+		[Embed(source="assets/gloves/overlays/overlay_red_up01.png")]
+		private var upOverlayClass1:Class;
+		[Embed(source="assets/gloves/overlays/overlay_red_up02.png")]
+		private var upOverlayClass2:Class;
+		[Embed(source="assets/gloves/overlays/overlay_red_up03.png")]
+		private var upOverlayClass3:Class;
 		[Embed(source="assets/gloves/dudes/dudeup.png")]
 		private var upDudeClass:Class;
 		
@@ -286,7 +290,7 @@ package com.leisure.energyjam.person
 			{
 				case UP:
 					skinClass = upSkinClass1;
-					overlayClass = upOverlayClass;
+					overlayClass = upOverlayClass1;
 					dudeClass = upDudeClass;
 					break
 				
@@ -377,11 +381,17 @@ package com.leisure.energyjam.person
 					}else if(skin is upSkinClass2)
 					{
 						swapSkin(upSkinClass3);
-					}else if(skin is upSkinClass3)
-					{
-						swapSkin(upSkinClass4);
 					}else{
 						swapSkin(upSkinClass1);
+					}
+					
+					if(overlay is upOverlayClass1)
+					{
+						swapOverlay(upOverlayClass2);
+					}else if(overlay is upOverlayClass2){
+						swapOverlay(upOverlayClass3);
+					}else{
+						swapOverlay(upOverlayClass1);
 					}
 					skin.x = 0;
 					skin.y = 0;
