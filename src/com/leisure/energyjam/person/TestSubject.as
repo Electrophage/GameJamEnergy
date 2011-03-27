@@ -9,6 +9,7 @@ package com.leisure.energyjam.person
 	import flash.geom.Rectangle;
 	import flash.media.Sound;
 	import flash.media.SoundChannel;
+	import flash.media.SoundTransform;
 	import flash.net.URLRequest;
 	
 	import mx.core.mx_internal;
@@ -32,8 +33,14 @@ package com.leisure.energyjam.person
 		private static const MAX_SPEED:int = 40;
 		private static const MIN_SPEED:int = 5;
 		
-		[Embed(source="assets/gloves/gloves_red_up.png")]
-		private var upSkinClass:Class;
+		[Embed(source="assets/gloves/gloves_red_up01.png")]
+		private var upSkinClass1:Class;
+		[Embed(source="assets/gloves/gloves_red_up02.png")]
+		private var upSkinClass2:Class;
+		[Embed(source="assets/gloves/gloves_red_up03.png")]
+		private var upSkinClass3:Class;
+		[Embed(source="assets/gloves/gloves_red_up04.png")]
+		private var upSkinClass4:Class;
 		[Embed(source="assets/gloves/overlays/overlay_red_up.png")]
 		private var upOverlayClass:Class;
 		[Embed(source="assets/gloves/dudes/dudeup.png")]
@@ -43,8 +50,12 @@ package com.leisure.energyjam.person
 		private var downSkinClass1:Class;
 		[Embed(source="assets/gloves/gloves_blue_down02.png")]
 		private var downSkinClass2:Class;
-		[Embed(source="assets/gloves/overlays/overlay_blue_down.png")]
-		private var downOverlayClass:Class;
+		[Embed(source="assets/gloves/overlays/overlay_blue_down01.png")]
+		private var downOverlayClass1:Class;
+		[Embed(source="assets/gloves/overlays/overlay_blue_down02.png")]
+		private var downOverlayClass2:Class;
+		[Embed(source="assets/gloves/overlays/overlay_blue_down03.png")]
+		private var downOverlayClass3:Class;
 		[Embed(source="assets/gloves/dudes/dudedown.png")]
 		private var downDudeClass:Class;
 		
@@ -59,8 +70,16 @@ package com.leisure.energyjam.person
 		[Embed(source="assets/gloves/dudes/dudeleft.png")]
 		private var leftDudeClass:Class;
 		
-		[Embed(source="assets/gloves/gloves_yellow_right.png")]
-		private var rightSkinClass:Class;
+		[Embed(source="assets/gloves/gloves_yellow_right01.png")]
+		private var rightSkinClass1:Class;
+		[Embed(source="assets/gloves/gloves_yellow_right02.png")]
+		private var rightSkinClass2:Class;
+		[Embed(source="assets/gloves/gloves_yellow_right03.png")]
+		private var rightSkinClass3:Class;
+		[Embed(source="assets/gloves/gloves_yellow_right04.png")]
+		private var rightSkinClass4:Class;
+		[Embed(source="assets/gloves/gloves_yellow_right05.png")]
+		private var rightSkinClass5:Class;
 		[Embed(source="assets/gloves/overlays/overlay_yellow_right.png")]
 		private var rightOverlayClass:Class;
 		[Embed(source="assets/gloves/dudes/duderight.png")]
@@ -249,7 +268,7 @@ package com.leisure.energyjam.person
 					var engine:Sound = engineForDirection;
 					if(engine != null)
 					{
-						engineChannel = engine.play();
+						engineChannel = engine.play(0,999);
 					}
 					
 					drawDirection();
@@ -266,19 +285,19 @@ package com.leisure.energyjam.person
 			switch(direction)
 			{
 				case UP:
-					skinClass = upSkinClass;
+					skinClass = upSkinClass1;
 					overlayClass = upOverlayClass;
 					dudeClass = upDudeClass;
 					break
 				
 				case DOWN:
 					skinClass = downSkinClass1;
-					overlayClass = downOverlayClass;
+					overlayClass = downOverlayClass1;
 					dudeClass = downDudeClass;
 					break;
 				
 				case RIGHT:
-					skinClass = rightSkinClass;
+					skinClass = rightSkinClass1;
 					overlayClass = rightOverlayClass;
 					dudeClass = rightDudeClass;
 					break;
@@ -293,11 +312,11 @@ package com.leisure.energyjam.person
 					skinClass = noneSkinClass;
 			}
 			
-			/*if(overlayClass != null)
+			if(overlayClass != null)
 			{
 				overlay = new overlayClass();
 				addChild(overlay);
-			}*/
+			}
 			if(dudeClass != null)
 			{
 				dude = new dudeClass();
@@ -319,6 +338,20 @@ package com.leisure.energyjam.person
 					}else{
 						swapSkin(downSkinClass1);
 					}
+					
+					if(overlay is downOverlayClass1)
+					{
+						swapOverlay(downOverlayClass2);
+					}else if(overlay is downOverlayClass2){
+						swapOverlay(downOverlayClass3);
+					}else{
+						swapOverlay(downOverlayClass1);
+					}
+					
+					skin.x = 0;
+					skin.y = -140;
+					overlay.x = 0;
+					overlay.y = -140;
 					break;
 				
 				case LEFT:
@@ -331,6 +364,51 @@ package com.leisure.energyjam.person
 					}else{
 						swapSkin(leftSkinClass1);
 					}
+					skin.x = 0;
+					skin.y = 0;
+					overlay.x = 0;
+					overlay.y = 0;
+					break;
+				
+				case UP:
+					if(skin is upSkinClass1)
+					{
+						swapSkin(upSkinClass2);
+					}else if(skin is upSkinClass2)
+					{
+						swapSkin(upSkinClass3);
+					}else if(skin is upSkinClass3)
+					{
+						swapSkin(upSkinClass4);
+					}else{
+						swapSkin(upSkinClass1);
+					}
+					skin.x = 0;
+					skin.y = 0;
+					overlay.x = 0;
+					overlay.y = 0;
+					break;
+				
+				case RIGHT:
+					if(skin is rightSkinClass1)
+					{
+						swapSkin(rightSkinClass2);
+					}else if(skin is rightSkinClass2)
+					{
+						swapSkin(rightSkinClass3);
+					}else if(skin is rightSkinClass3)
+					{
+						swapSkin(rightSkinClass4);
+					}else if(skin is rightSkinClass4)
+					{
+						swapSkin(rightSkinClass5);
+					}else{
+						swapSkin(rightSkinClass1);
+					}
+					skin.x = 0;
+					skin.y = 0;
+					overlay.x = 0;
+					overlay.y = 0;
 					break;
 			}
 		}
@@ -344,6 +422,17 @@ package com.leisure.energyjam.person
 			
 			skin = new skinClass();
 			addChild(skin);
+		}
+		
+		private function swapOverlay(overlayClass:Class):void
+		{
+			if(overlay && contains(overlay))
+			{
+				removeChild(overlay);
+			}
+			
+			overlay = new overlayClass();
+			addChild(overlay);
 		}
 		
 		private function removeAllChildren():void
@@ -450,15 +539,19 @@ package com.leisure.energyjam.person
 			switch(direction)
 			{
 				case UP:
+					soundTransform.volume = 1.0;
 					return upEngine;
 					
 				case DOWN:
+					soundTransform.volume = 1.0;
 					return downEngine;
 					
 				case LEFT:
+					soundTransform.volume = 1.0;
 					return leftEngine;
 					
 				case RIGHT:
+					soundTransform.volume = 0.3;
 					return rightEngine;
 			}
 			

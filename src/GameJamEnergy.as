@@ -25,6 +25,8 @@ package
 	import flash.text.engine.TextLine;
 	import flash.ui.Keyboard;
 	
+	import flashx.textLayout.factory.TruncationOptions;
+	
 	[SWF(width="500", height="500", backgroundColor='#000000', frameRate='40')]
 	public class GameJamEnergy extends Sprite
 	{
@@ -141,7 +143,7 @@ package
 			subject.addEventListener(EnergyChangeEvent.OUT_OF_POWER, handleOutOfEnergy);
 			stage.focus = stage;
 			gameState = STATE_RUNNING;
-			musicChannel = idleMusic.play(0,999);
+			musicChannel = idleMusic.play(0,999, new SoundTransform(0.3));
 			removeChild(startButton);
 			removeChild(startScreen);
 		}
@@ -154,11 +156,11 @@ package
 			removeChild(chamber);
 			removeChild(gauge);
 			musicChannel.stop();
-			musicChannel = idleMusic.play(0,999);
 			setUp();
 			initLevel();
 			addChild(startScreen);
 			addChild(startButton);
+			credits.winText.visible = false;
 		}
 		
 		private function setUp():void
@@ -282,7 +284,7 @@ package
 			var block:Block;
 			var blockBounds:Rectangle;
 			var blockOrigin:Point;
-			var subjectOrigin:Point = new Point(subject.x,subject.y);
+			var subjectOrigin:Point = new Point(subject.x,subject.y+subject.skin.y);
 			
 			for(var i:int=0; i<blocks.length; ++i)
 			{
@@ -295,12 +297,18 @@ package
 					{
 						if(block.brokenByDirection(subject.direction))
 						{
+							if(block.type == Block.RAINBOW)
+							{
+								credits.winText.visible = true;
+								handleOutOfEnergy(new EnergyChangeEvent(EnergyChangeEvent.OUT_OF_POWER));
+								return false;
+							}
 							subject.energy += block.energyChange;
 							breakingBlocks.push(block);
 							chamber.removeBlock(block);
 							continue;
 						}else{
-						//	subjectEvenWithBlock(block);
+							subjectEvenWithBlock(block);
 							return false;
 						}
 					}
@@ -1507,6 +1515,12 @@ package
 			
 			loc= new Point(24,23);
 			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc = new Point(8,22);
+			chamber.createBlockOfBlocks(loc,Block.RAINBOW);
+			
+			loc = new Point(2,16);
+			chamber.createBlockOfBlocks(loc,Block.RAINBOW);
 		}
 		
 		private function removeArrayItemAt(arr:Array, index:int):Array

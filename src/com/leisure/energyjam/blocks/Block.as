@@ -180,6 +180,7 @@ package com.leisure.energyjam.blocks
 					
 				case WHITE:
 				case BLACK:
+				case RAINBOW:
 					return true;
 					
 				default:

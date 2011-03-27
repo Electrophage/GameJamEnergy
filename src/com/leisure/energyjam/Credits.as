@@ -16,6 +16,9 @@ package com.leisure.energyjam
 		[Embed(source="assets/nextButton.png")]
 		private var nextClass:Class;
 		
+		[Embed(source="assets/winText.png")]
+		private var winClass:Class;
+		
 		
 		private var _skin:Bitmap
 
@@ -28,6 +31,19 @@ package com.leisure.energyjam
 		{
 			_skin = value;
 		}
+		
+		private var _winText:Sprite;
+
+		public function get winText():Sprite
+		{
+			return _winText;
+		}
+
+		public function set winText(value:Sprite):void
+		{
+			_winText = value;
+		}
+
 		
 		private var _nextButton:Sprite;
 
@@ -54,9 +70,14 @@ package com.leisure.energyjam
 			nextButton.width = 260;
 			nextButton.height = 44;
 			nextButton.x = 118;
-			nextButton.y = 380;
-			
+			nextButton.y = 450;
 			addChild(nextButton);
+			
+			winText = new Sprite();
+			winText.addChild(new winClass());
+			winText.y = 350;
+			addChild(winText);
+			winText.visible = false;
 		}
 	}
 }
