@@ -96,14 +96,13 @@ package com.leisure.energyjam.room
 		{
 			var index:Point = blockOriginToBlockSpace(new Point(block.x,block.y));
 			blocks[index.x][index.y] = null;
-		//	removeChild(block);
 		}
 		
-		public function createBlockOfBlocks(rect:Rectangle, type:String):void
+		public function createBlockOfBlocks(rect:Rectangle, type:String, hStep:int=1, vStep:int=1):void
 		{
-			for(var i:int=rect.x;i<rect.right;++i)
+			for(var i:int=rect.x;i<rect.right;i+=hStep)
 			{
-				for(var j:int=rect.y;j<rect.bottom;++j)
+				for(var j:int=rect.y;j<rect.bottom;j+=vStep)
 				{
 					addBlockAt(new Block(type),i,j);
 				}
@@ -129,9 +128,12 @@ package com.leisure.energyjam.room
 		
 		private function initChamber():void
 		{
-			graphics.beginFill(0xffffff,1);
+		/*	graphics.beginFill(0xffffff,1);
 			graphics.drawRect(0,0,DESIRED_WIDTH,DESIRED_HEIGHT);
-			graphics.endFill();
+			graphics.endFill();*/
+			
+			background = new backgroundClass();
+			addChild(background);
 		}
 		
 		private function initBlockSpace():void

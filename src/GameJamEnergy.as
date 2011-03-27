@@ -10,12 +10,17 @@ package
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
+	import flash.events.MouseEvent;
 	import flash.geom.Point;
 	import flash.geom.Rectangle;
 	import flash.media.Sound;
 	import flash.media.SoundChannel;
 	import flash.media.SoundTransform;
 	import flash.net.URLRequest;
+	import flash.text.engine.ElementFormat;
+	import flash.text.engine.TextBlock;
+	import flash.text.engine.TextElement;
+	import flash.text.engine.TextLine;
 	import flash.ui.Keyboard;
 	
 	[SWF(width="500", height="500", backgroundColor='#000000', frameRate='40')]
@@ -23,9 +28,27 @@ package
 	{
 		public static const HEIGHT:int = 500;
 		public static const WIDTH:int = 500;
+		
+		public static const STATE_START:String = "startScreen";
+		public static const STATE_RUNNING:String = "running";
+		public static const STATE_GAME_OVER:String = "gameOver";
+		
+		private var _gameState:String;
+
+		public function get gameState():String
+		{
+			return _gameState;
+		}
+
+		public function set gameState(value:String):void
+		{
+			_gameState = value;
+		}
+		
 		private var chamber:TestChamber;
 		private var subject:TestSubject;
 		private var gauge:EnergyGuage;
+		private var startButton:Sprite;
 		
 		private var musicSource:String = "assets/music/GameJam2.mp3";
 		private var powerUpSource:String = "assets/sounds/Powerup.mp3";
@@ -40,6 +63,8 @@ package
 		
 		public function GameJamEnergy()
 		{
+			gameState = STATE_START;
+			
 			var musicReq:URLRequest = new URLRequest(musicSource);
 			music = new Sound();
 			music.load(musicReq);
@@ -88,8 +113,37 @@ package
 			gauge.width = 20;
 			gauge.height = TestSubject.MAX_ENERGY;
 			
+			startButton = new Sprite();
+			startButton.graphics.beginFill(0x0000ff);
+			startButton.graphics.drawRoundRect(0,0,100,80,90,90);
+			startButton.graphics.endFill();
+			startButton.x = WIDTH/2;
+			startButton.y = HEIGHT/2;
+			startButton.buttonMode = true;
+			
+			var textElement:TextElement = new TextElement();
+			textElement.text = "Volunteer";
+			textElement.elementFormat = new ElementFormat();
+			
+			var textblock:TextBlock = new TextBlock(textElement);
+			var buttonLabel:TextLine = textblock.createTextLine();
+			
+			startButton.addChild(buttonLabel);
+			buttonLabel.x = 30;
+			buttonLabel.y = 30;
+			addChild(startButton);
+			
+			startButton.addEventListener(MouseEvent.CLICK, onStartClicked);
+			
 			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressHandler);
 			addEventListener(Event.ENTER_FRAME, enterFrameHandler);
+		}
+		
+		private function onStartClicked(e:MouseEvent):void
+		{
+			stage.focus = stage;
+			gameState = STATE_RUNNING;
+			removeChild(startButton);
 		}
 		
 		private function initLevel():void
@@ -101,16 +155,16 @@ package
 			chamber.createBlockOfBlocks(rect,Block.WHITE);
 			
 			rect = new Rectangle(25,25,25,25);
-			chamber.createBlockOfBlocks(rect,Block.RED_UP);
+			chamber.createBlockOfBlocks(rect,Block.RED_UP,1,2);
 			
 			rect = new Rectangle(75,25,25,25);
-			chamber.createBlockOfBlocks(rect,Block.BLUE_DOWN);
+			chamber.createBlockOfBlocks(rect,Block.BLUE_DOWN,1,2);
 			
 			rect = new Rectangle(75,75,25,25);
-			chamber.createBlockOfBlocks(rect,Block.GREEN_LEFT);
+			chamber.createBlockOfBlocks(rect,Block.GREEN_LEFT,2,1);
 			
 			rect = new Rectangle(25,75,25,25);
-			chamber.createBlockOfBlocks(rect,Block.YELLOW_RIGHT);
+			chamber.createBlockOfBlocks(rect,Block.YELLOW_RIGHT,2,1);
 			
 			rect = new Rectangle(60,60,5,5);
 			chamber.clearBlockOfBlocks(rect);
@@ -154,7 +208,14 @@ package
 		
 		private function keyPressHandler(e:KeyboardEvent):void
 		{
-			if(musicChannel == null)
+			if(gameState != STATE_RUNNING)
+				return;
+			
+			if(musicChannel == null && (
+				e.keyCode == Keyboard.UP ||
+				e.keyCode == Keyboard.LEFT ||
+				e.keyCode == Keyboard.RIGHT ||
+				e.keyCode == Keyboard.DOWN))
 			{
 				musicChannel = music.play(0,999,new SoundTransform(0.3));
 				powerUp.play();
@@ -192,7 +253,9 @@ package
 		
 		private function handleOutOfEnergy(e:EnergyChangeEvent):void
 		{
+			gameState = STATE_GAME_OVER;
 			musicChannel.stop();
+			musicChannel = null;
 			powerDown.play();
 		}
 		
