@@ -1,6 +1,7 @@
 package
 {
 	import com.leisure.energyjam.blocks.Block;
+	import com.leisure.energyjam.eventz.EnergyChangeEvent;
 	import com.leisure.energyjam.eventz.MovementEvent;
 	import com.leisure.energyjam.gui.EnergyGuage;
 	import com.leisure.energyjam.person.TestSubject;
@@ -13,6 +14,7 @@ package
 	import flash.geom.Rectangle;
 	import flash.media.Sound;
 	import flash.media.SoundChannel;
+	import flash.media.SoundTransform;
 	import flash.net.URLRequest;
 	import flash.ui.Keyboard;
 	
@@ -26,7 +28,11 @@ package
 		private var gauge:EnergyGuage;
 		
 		private var musicSource:String = "assets/music/GameJam2.mp3";
+		private var powerUpSource:String = "assets/sounds/Powerup.mp3";
+		private var powerDownSource:String = "assets/sounds/PowerDown.mp3";
 		private var music:Sound;
+		private var powerUp:Sound;
+		private var powerDown:Sound;
 		
 		private var musicChannel:SoundChannel;
 		
@@ -37,6 +43,15 @@ package
 			var musicReq:URLRequest = new URLRequest(musicSource);
 			music = new Sound();
 			music.load(musicReq);
+			
+			var powerUpReq:URLRequest = new URLRequest(powerUpSource);
+			powerUp = new Sound();
+			powerUp.load(powerUpReq);
+			
+			var powerDownReq:URLRequest = new URLRequest(powerDownSource);
+			powerDown = new Sound();
+			powerDown.load(powerDownReq);
+			
 			breakingBlocks = new Array();
 			addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
 		}
@@ -58,6 +73,7 @@ package
 			subject.x = subjectCenterX;
 			subject.y = subjectCenterY;
 			subject.addEventListener(MovementEvent.MOVE, handleMove);
+			subject.addEventListener(EnergyChangeEvent.OUT_OF_POWER, handleOutOfEnergy);
 			
 			gauge = new EnergyGuage();
 			gauge.x = 20;
@@ -139,7 +155,10 @@ package
 		private function keyPressHandler(e:KeyboardEvent):void
 		{
 			if(musicChannel == null)
-				musicChannel = music.play(0,999);
+			{
+				musicChannel = music.play(0,999,new SoundTransform(0.3));
+				powerUp.play();
+			}
 			
 			switch(e.keyCode)
 			{
@@ -169,6 +188,12 @@ package
 				doIntersections();
 			}
 			gauge.energy = subject.energy;
+		}
+		
+		private function handleOutOfEnergy(e:EnergyChangeEvent):void
+		{
+			musicChannel.stop();
+			powerDown.play();
 		}
 		
 		/**

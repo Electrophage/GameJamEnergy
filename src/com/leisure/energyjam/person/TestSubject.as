@@ -1,6 +1,7 @@
 package com.leisure.energyjam.person
 {
 	import com.leisure.energyjam.blocks.Block;
+	import com.leisure.energyjam.eventz.EnergyChangeEvent;
 	import com.leisure.energyjam.eventz.MovementEvent;
 	
 	import flash.display.Bitmap;
@@ -34,14 +35,26 @@ package com.leisure.energyjam.person
 		[Embed(source="assets/gloves/gloves_red_up.png")]
 		private var upSkinClass:Class;
 		
+		[Embed(source="assets/gloves//overlays/overlay_red_up.png")]
+		private var upOverlayClass:Class;
+		
 		[Embed(source="assets/gloves/gloves_blue_down.png")]
 		private var downSkinClass:Class;
+		
+		[Embed(source="assets/gloves//overlays/overlay_blue_down.png")]
+		private var downOverlayClass:Class;
 		
 		[Embed(source="assets/gloves/gloves_green_left.png")]
 		private var leftSkinClass:Class;
 		
+		[Embed(source="assets/gloves//overlays/overlay_green_left.png")]
+		private var leftOverlayClass:Class;
+		
 		[Embed(source="assets/gloves/gloves_yellow_right.png")]
 		private var rightSkinClass:Class;
+		
+		[Embed(source="assets/gloves//overlays/overlay_yellow_right.png")]
+		private var rightOverlayClass:Class;
 		
 		[Embed(source="assets/gloves/gloves_white_stop.png")]
 		private var noneSkinClass:Class;
@@ -80,6 +93,7 @@ package com.leisure.energyjam.person
 		private var unplayed:Array;
 		private var played:Array;
 		
+		private var overlay:Bitmap;
 		private var _skin:Bitmap;
 
 		public function get skin():Bitmap
@@ -167,6 +181,10 @@ package com.leisure.energyjam.person
 			if(direction != NONE)
 			{
 				--energy;
+				if(energy <= 0)
+				{
+					dispatchEvent(new EnergyChangeEvent(EnergyChangeEvent.OUT_OF_POWER));
+				}
 				dispatchEvent(new MovementEvent(MovementEvent.MOVE));
 			}
 		}
@@ -219,22 +237,27 @@ package com.leisure.energyjam.person
 		{
 			removeAllChildren();
 			var skinClass:Class;
+			var overlayClass:Class;
 			switch(direction)
 			{
 				case UP:
 					skinClass = upSkinClass;
+					overlayClass = upOverlayClass;
 					break
 				
 				case DOWN:
 					skinClass = downSkinClass;
+					overlayClass = downOverlayClass;
 					break;
 				
 				case RIGHT:
 					skinClass = rightSkinClass;
+					overlayClass = rightOverlayClass;
 					break;
 				
 				case LEFT:
 					skinClass = leftSkinClass;
+					overlayClass = leftOverlayClass;
 					break;
 				
 				case NONE:
@@ -242,6 +265,12 @@ package com.leisure.energyjam.person
 			}
 			
 			skin = new skinClass();
+			if(overlayClass != null)
+			{
+				overlay = new overlayClass();
+				addChild(overlay);
+			}
+			
 			addChild(skin);
 		}
 		
