@@ -61,10 +61,12 @@ package
 		private var credits:Credits;
 		
 		private var playMusicSource:String = "assets/music/NRG_1.mp3";
+		private var idleMusicSource:String = "assets/music/Idle1.mp3";
 		private var endMusicSource:String = "assets/music/Endsong.mp3";
 		private var powerUpSource:String = "assets/sounds/Powerup.mp3";
 		private var powerDownSource:String = "assets/sounds/PowerDown.mp3";
 		private var playMusic:Sound;
+		private var idleMusic:Sound;
 		private var endMusic:Sound;
 		private var powerUp:Sound;
 		private var powerDown:Sound;
@@ -80,6 +82,10 @@ package
 			var musicReq:URLRequest = new URLRequest(playMusicSource);
 			playMusic = new Sound();
 			playMusic.load(musicReq);
+			
+			var idleMusicReq:URLRequest = new URLRequest(idleMusicSource);
+			idleMusic = new Sound();
+			idleMusic.load(idleMusicReq);
 			
 			var endMusicReq:URLRequest = new URLRequest(endMusicSource);
 			endMusic = new Sound();
@@ -135,6 +141,7 @@ package
 			subject.addEventListener(EnergyChangeEvent.OUT_OF_POWER, handleOutOfEnergy);
 			stage.focus = stage;
 			gameState = STATE_RUNNING;
+			musicChannel = idleMusic.play(0,999);
 			removeChild(startButton);
 			removeChild(startScreen);
 		}
@@ -147,7 +154,7 @@ package
 			removeChild(chamber);
 			removeChild(gauge);
 			musicChannel.stop();
-			musicChannel = null;
+			musicChannel = idleMusic.play(0,999);
 			setUp();
 			initLevel();
 			addChild(startScreen);
@@ -181,6 +188,7 @@ package
 			gauge.width = 20;
 			gauge.height = TestSubject.MAX_ENERGY;
 			
+			gameMusicRunning = false;
 		}
 		
 		private function enterFrameHandler(e:Event):void
@@ -203,19 +211,23 @@ package
 			}
 		}
 		
+		private var gameMusicRunning:Boolean = false;
+		
 		private function keyPressHandler(e:KeyboardEvent):void
 		{
 			if(gameState != STATE_RUNNING)
 				return;
 			
-			if(musicChannel == null && (
+			if(gameMusicRunning == false && (
 				e.keyCode == Keyboard.UP ||
 				e.keyCode == Keyboard.LEFT ||
 				e.keyCode == Keyboard.RIGHT ||
 				e.keyCode == Keyboard.DOWN))
 			{
 				powerUp.play();
+				musicChannel.stop();
 				musicChannel = playMusic.play(0,999,new SoundTransform());
+				gameMusicRunning = true;
 			}
 			
 			switch(e.keyCode)
