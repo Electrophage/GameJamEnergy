@@ -1,5 +1,6 @@
 package
 {
+	import com.leisure.energyjam.Credits;
 	import com.leisure.energyjam.blocks.Block;
 	import com.leisure.energyjam.eventz.EnergyChangeEvent;
 	import com.leisure.energyjam.eventz.MovementEvent;
@@ -49,6 +50,7 @@ package
 		private var subject:TestSubject;
 		private var gauge:EnergyGuage;
 		private var startButton:Sprite;
+		private var credits:Credits;
 		
 		private var musicSource:String = "assets/music/GameJam2.mp3";
 		private var powerUpSource:String = "assets/sounds/Powerup.mp3";
@@ -98,7 +100,6 @@ package
 			subject.x = subjectCenterX;
 			subject.y = subjectCenterY;
 			subject.addEventListener(MovementEvent.MOVE, handleMove);
-			subject.addEventListener(EnergyChangeEvent.OUT_OF_POWER, handleOutOfEnergy);
 			
 			gauge = new EnergyGuage();
 			gauge.x = 20;
@@ -106,6 +107,10 @@ package
 			gauge.energy = subject.energy;
 			
 			initLevel();
+			
+			credits = new Credits();
+			credits.width = WIDTH;
+			credits.height = HEIGHT+100;
 			
 			addChild(chamber);
 			addChild(subject);
@@ -117,8 +122,8 @@ package
 			startButton.graphics.beginFill(0x0000ff);
 			startButton.graphics.drawRoundRect(0,0,100,80,90,90);
 			startButton.graphics.endFill();
-			startButton.x = WIDTH/2;
-			startButton.y = HEIGHT/2;
+			startButton.x = WIDTH/2 - 50;
+			startButton.y = HEIGHT/2 - 40;
 			startButton.buttonMode = true;
 			
 			var textElement:TextElement = new TextElement();
@@ -141,50 +146,13 @@ package
 		
 		private function onStartClicked(e:MouseEvent):void
 		{
+			subject.addEventListener(EnergyChangeEvent.OUT_OF_POWER, handleOutOfEnergy);
 			stage.focus = stage;
 			gameState = STATE_RUNNING;
 			removeChild(startButton);
 		}
 		
-		private function initLevel():void
-		{
-			var i:int;
-			var j:int;
-			
-			var rect:Rectangle = new Rectangle(3,3,121,121);
-			chamber.createBlockOfBlocks(rect,Block.WHITE);
-			
-			rect = new Rectangle(25,25,25,25);
-			chamber.createBlockOfBlocks(rect,Block.RED_UP,1,2);
-			
-			rect = new Rectangle(75,25,25,25);
-			chamber.createBlockOfBlocks(rect,Block.BLUE_DOWN,1,2);
-			
-			rect = new Rectangle(75,75,25,25);
-			chamber.createBlockOfBlocks(rect,Block.GREEN_LEFT,2,1);
-			
-			rect = new Rectangle(25,75,25,25);
-			chamber.createBlockOfBlocks(rect,Block.YELLOW_RIGHT,2,1);
-			
-			rect = new Rectangle(60,60,5,5);
-			chamber.clearBlockOfBlocks(rect);
-			
-			for(i=0;i<125;++i)
-			{
-				chamber.addBlockAt(new Block(Block.BLACK), 0, i);
-				chamber.addBlockAt(new Block(Block.BLACK), 1, i);
-				chamber.addBlockAt(new Block(Block.BLACK), 2, i);
-				chamber.addBlockAt(new Block(Block.BLACK), 122, i);
-				chamber.addBlockAt(new Block(Block.BLACK), 123, i);
-				chamber.addBlockAt(new Block(Block.BLACK), 124, i);
-				chamber.addBlockAt(new Block(Block.BLACK), i, 0);
-				chamber.addBlockAt(new Block(Block.BLACK), i, 1);
-				chamber.addBlockAt(new Block(Block.BLACK), i, 2);
-				chamber.addBlockAt(new Block(Block.BLACK), i, 122);
-				chamber.addBlockAt(new Block(Block.BLACK), i, 123);
-				chamber.addBlockAt(new Block(Block.BLACK), i, 124);
-			}
-		}
+		
 		
 		private function enterFrameHandler(e:Event):void
 		{
@@ -217,8 +185,8 @@ package
 				e.keyCode == Keyboard.RIGHT ||
 				e.keyCode == Keyboard.DOWN))
 			{
-				musicChannel = music.play(0,999,new SoundTransform(0.3));
 				powerUp.play();
+				musicChannel = music.play(0,999,new SoundTransform(0.3));
 			}
 			
 			switch(e.keyCode)
@@ -253,10 +221,13 @@ package
 		
 		private function handleOutOfEnergy(e:EnergyChangeEvent):void
 		{
+			subject.removeEventListener(EnergyChangeEvent.OUT_OF_POWER,handleOutOfEnergy);
 			gameState = STATE_GAME_OVER;
 			musicChannel.stop();
 			musicChannel = null;
 			powerDown.play();
+			addChild(credits);
+			setChildIndex(subject,0);
 		}
 		
 		/**
@@ -515,6 +486,970 @@ package
 				case TestSubject.NONE:
 					break;
 			}
+		}
+		private function initLevel():void
+		{
+			var loc:Point;
+			//Zero
+			loc= new Point(0,1);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(0,3);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(0,5);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(0,7);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(0,9);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(0,11);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(0,13);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(0,15);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(0,17);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(0,19);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(0,21);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(0,23);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			//One
+			loc = new Point(1,0);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(1,2);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(1,4);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(1,6);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(1,8);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(1,10);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(1,12);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(1,14);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(1,16);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(1,18);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(1,20);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(1,22);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(1,24);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			//Two
+			loc= new Point(2,1);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(2,3);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(2,5);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(2,7);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(2,9);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(2,11);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(2,13);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(2,15);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(2,17);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(2,19);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(2,21);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc = new Point(2,23);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			//Three
+			loc= new Point(3,0);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(3,2);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(3,4);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(3,6);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(3,8);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(3,10);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(3,12);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(3,14);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(3,16);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(3,18);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(3,20);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(3,22);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(3,24);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			//Four
+			loc= new Point(4,1);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(4,3);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(4,5);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(4,7);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(4,9);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(4,11);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(4,13);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(4,15);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(4,17);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(4,19);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(4,21);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(4,23);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			//Five
+			loc= new Point(5,0);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(5,2);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(5,4);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(5,6);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(5,8);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(5,10);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(5,12);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(5,14);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(5,16);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(5,18);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(5,20);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(5,22);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(5,24);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			//Six
+			loc= new Point(6,1);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(6,3);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(6,5);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(6,7);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(6,9);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(6,11);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(6,13);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(6,15);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(6,17);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(6,19);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(6,21);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(6,23);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			//Seven
+			loc= new Point(7,0);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(7,2);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(7,4);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(7,6);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(7,8);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(7,10);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(7,12);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(7,14);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(7,16);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(7,18);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(7,20);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(7,22);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(7,24);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			//EIGHT
+			loc= new Point(8,1);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(8,3);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(8,5);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(8,7);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(8,9);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(8,11);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(8,13);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(8,15);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(8,17);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(8,19);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(8,21);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			//KEY in between
+			loc= new Point(8,23);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			//Nine
+			loc= new Point(9,0);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(9,2);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(9,4);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(9,6);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(9,8);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(9,10);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(9,12);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(9,14);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(9,16);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(9,18);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(9,20);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(9,22);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(9,24);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			//Ten
+			loc= new Point(10,1);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(10,3);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(10,5);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(10,7);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(10,9);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(10,11);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(10,13);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(10,15);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(10,17);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(10,19);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(10,21);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(10,23);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			//Eleven
+			loc= new Point(11,0);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(11,2);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(11,4);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(11,6);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(11,8);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(11,10);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(11,12);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(11,14);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(11,16);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(11,18);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(11,20);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(11,22);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(11,24);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			//Twelve
+			loc= new Point(12,1);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(12,3);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(12,5);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(12,7);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(12,9);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(12,11);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(12,13);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(12,15);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(12,17);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(12,19);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(12,21);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(12,23);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			//Thirteen
+			loc= new Point(13,0);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(13,2);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(13,4);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(13,6);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(13,8);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(13,10);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(13,12);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(13,14);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(13,16);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(13,18);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(13,20);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(13,22);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(13,24);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			//Fourteen
+			loc= new Point(14,1);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(14,3);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(14,5);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(14,7);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(14,9);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(14,11);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(14,13);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(14,15);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(14,17);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(14,19);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(14,21);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(14,23);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			//Fifteen
+			loc= new Point(15,0);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(15,2);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(15,4);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(15,6);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(15,8);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(15,10);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(15,12);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(15,14);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(15,16);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(15,18);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(15,20);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(15,22);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(15,24);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			//Sixteen
+			loc= new Point(16,1);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(16,3);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(16,5);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(16,7);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(16,9);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(16,11);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(16,13);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(16,15);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(16,17);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(16,19);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(16,21);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(16,23);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			//Seventeen
+			loc= new Point(17,0);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(17,2);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(17,4);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(17,6);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(17,8);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(17,10);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(17,12);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(17,14);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(17,16);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(17,18);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(17,20);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(17,22);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(17,24);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			//Eightteen
+			loc= new Point(18,1);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(18,3);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(18,5);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(18,7);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(18,9);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(18,11);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(18,13);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(18,15);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(18,17);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(18,19);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(18,21);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(18,23);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			//Nineteen
+			loc= new Point(19,0);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(19,2);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(19,4);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(19,6);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(19,8);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(19,10);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(19,12);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(19,14);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(19,16);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(19,18);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(19,20);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(19,22);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(19,24);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			//Twenty
+			loc= new Point(20,1);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(20,3);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(20,5);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(20,7);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(20,9);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(20,11);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(20,13);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(20,15);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(20,17);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(20,19);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(20,21);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(20,23);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			//Twentyone
+			loc= new Point(21,0);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(21,2);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(21,4);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(21,6);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(21,8);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(21,10);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(21,12);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(21,14);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(21,16);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(21,18);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(21,20);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(21,22);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(21,24);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			//TwentyTwo
+			loc= new Point(22,1);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(22,3);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(22,5);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(22,7);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(22,9);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(22,11);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(22,13);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(22,15);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(22,17);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(22,19);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(22,21);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(22,23);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			//TwentyThree
+			loc= new Point(23,0);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(23,2);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(23,4);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(23,6);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(23,8);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(23,10);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(23,12);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(23,14);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(23,16);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(23,18);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(23,20);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(23,22);
+			chamber.createBlockOfBlocks(loc, Block.GREEN_LEFT);
+			
+			loc= new Point(23,24);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			//TwentyFour
+			loc= new Point(24,1);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(24,3);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(24,5);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(24,7);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(24,9);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(24,11);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(24,13);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(24,15);
+			chamber.createBlockOfBlocks(loc, Block.YELLOW_RIGHT);
+			
+			loc= new Point(24,17);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(24,19);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
+			
+			loc= new Point(24,21);
+			chamber.createBlockOfBlocks(loc, Block.BLUE_DOWN);
+			
+			loc= new Point(24,23);
+			chamber.createBlockOfBlocks(loc, Block.RED_UP);
 		}
 		
 		private function removeArrayItemAt(arr:Array, index:int):Array

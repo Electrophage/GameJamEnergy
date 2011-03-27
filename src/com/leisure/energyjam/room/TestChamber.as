@@ -37,6 +37,7 @@ package com.leisure.energyjam.room
 			super();
 			initChamber();
 			initBlockSpace();
+			cacheAsBitmap = true;
 		}
 		
 		
@@ -98,15 +99,31 @@ package com.leisure.energyjam.room
 			blocks[index.x][index.y] = null;
 		}
 		
-		public function createBlockOfBlocks(rect:Rectangle, type:String, hStep:int=1, vStep:int=1):void
+		public function createBlockOfBlocks(loc:Point, type:String):void
 		{
-			for(var i:int=rect.x;i<rect.right;i+=hStep)
+			var hStep:int=1;
+			var vStep:int=1;
+			
+			loc.x *=5;
+			loc.y *=5;
+			
+			if(type == Block.RED_UP || type == Block.BLUE_DOWN)
 			{
-				for(var j:int=rect.y;j<rect.bottom;j+=vStep)
+				vStep = 2;
+			}else if(type == Block.GREEN_LEFT || type == Block.YELLOW_RIGHT)
+			{
+				hStep = 2;
+			}
+			
+			for(var i:int=loc.x;i<loc.x+5;i+=hStep)
+			{
+				for(var j:int=loc.y;j<loc.y+5;j+=vStep)
 				{
 					addBlockAt(new Block(type),i,j);
 				}
 			}
+			
+			addBlockAt(new Block(Block.WHITE),loc.x+2,loc.y+2);
 		}
 		
 		public function clearBlockOfBlocks(rect:Rectangle):void

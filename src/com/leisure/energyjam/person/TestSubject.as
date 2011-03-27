@@ -26,74 +26,76 @@ package com.leisure.energyjam.person
 		
 		public static const MAX_ENERGY:Number = 300;
 		
-		public static const DESIRED_WIDTH:int = 200;
-		public static const DESIRED_HEIGHT:int = 200;
+		public static const DESIRED_WIDTH:int = 140;
+		public static const DESIRED_HEIGHT:int = 140;
 		
 		private static const MAX_SPEED:int = 40;
 		private static const MIN_SPEED:int = 5;
 		
 		[Embed(source="assets/gloves/gloves_red_up.png")]
 		private var upSkinClass:Class;
-		
-		[Embed(source="assets/gloves//overlays/overlay_red_up.png")]
+		[Embed(source="assets/gloves/overlays/overlay_red_up.png")]
 		private var upOverlayClass:Class;
+		[Embed(source="assets/gloves/dudes/dudeup.png")]
+		private var upDudeClass:Class;
 		
 		[Embed(source="assets/gloves/gloves_blue_down.png")]
 		private var downSkinClass:Class;
-		
-		[Embed(source="assets/gloves//overlays/overlay_blue_down.png")]
+		[Embed(source="assets/gloves/overlays/overlay_blue_down.png")]
 		private var downOverlayClass:Class;
+		[Embed(source="assets/gloves/dudes/dudedown.png")]
+		private var downDudeClass:Class;
 		
 		[Embed(source="assets/gloves/gloves_green_left.png")]
 		private var leftSkinClass:Class;
-		
-		[Embed(source="assets/gloves//overlays/overlay_green_left.png")]
+		[Embed(source="assets/gloves/overlays/overlay_green_left.png")]
 		private var leftOverlayClass:Class;
+		[Embed(source="assets/gloves/dudes/dudeleft.png")]
+		private var leftDudeClass:Class;
 		
 		[Embed(source="assets/gloves/gloves_yellow_right.png")]
 		private var rightSkinClass:Class;
-		
-		[Embed(source="assets/gloves//overlays/overlay_yellow_right.png")]
+		[Embed(source="assets/gloves/overlays/overlay_yellow_right.png")]
 		private var rightOverlayClass:Class;
+		[Embed(source="assets/gloves/dudes/duderight.png")]
+		private var rightDudeClass:Class;
 		
 		[Embed(source="assets/gloves/gloves_white_stop.png")]
 		private var noneSkinClass:Class;
 		
-		private var gain1SoundSource:String = "assets/sounds/GainT01.mp3";
-		private var gain2SoundSource:String = "assets/sounds/GainT02.mp3";
-		private var gain3SoundSource:String = "assets/sounds/GainT03.mp3";
-		private var gain4SoundSource:String = "assets/sounds/GainT04.mp3";
+		private var upEngineSource:String = "assets/sounds/UpFist.mp3";
+		private var downEngineSource:String = "assets/sounds/UpFist.mp3";
+		private var rightEngineSource:String = "assets/sounds/UpFist.mp3";
+		private var leftEngineSource:String = "assets/sounds/UpFist.mp3";
 		
+		private var gain1SoundSource:String = "assets/sounds/GainT01.mp3";
 		private var drain1SoundSource:String = "assets/sounds/DrainT01.mp3";
 		private var drain2SoundSource:String = "assets/sounds/DrainT02.mp3";
 		private var drain3SoundSource:String = "assets/sounds/DrainT03.mp3";
 		private var drain4SoundSource:String = "assets/sounds/DrainT04.mp3";
-		
 		private var down1SoundSource:String = "assets/sounds/DownT01.mp3";
 		private var down2SoundSource:String = "assets/sounds/DownT02.mp3";
 		private var down3SoundSource:String = "assets/sounds/DownT03.mp3";
-		
-		private var left1SoundSource:String = "assets/sounds/LeftT01.mp3";
 		private var left2SoundSource:String = "assets/sounds/LeftT02.mp3";
-		private var left3SoundSource:String = "assets/sounds/LeftT03.mp3";
-		
 		private var right1SoundSource:String = "assets/sounds/RightT01.mp3";
-		private var right2SoundSource:String = "assets/sounds/RightT02.mp3";
-		private var right3SoundSource:String = "assets/sounds/RightT03.mp3";
-		
 		private var up1SoundSource:String = "assets/sounds/UpT01.mp3";
 		private var up2SoundSource:String = "assets/sounds/UpT02.mp3";
-		private var up3SoundSource:String = "assets/sounds/UpT03.mp3";
-		
 		private var test1SoundSource:String = "assets/sounds/TestT01.mp3";
 		
 		private var yell:Sound;
 		private var yellChannel:SoundChannel;
 		
+		private var upEngine:Sound;
+		private var downEngine:Sound;
+		private var leftEngine:Sound;
+		private var rightEngine:Sound;
+		private var engineChannel:SoundChannel;
+		
 		private var unplayed:Array;
 		private var played:Array;
 		
 		private var overlay:Bitmap;
+		private var dude:Bitmap;
 		private var _skin:Bitmap;
 
 		public function get skin():Bitmap
@@ -115,6 +117,7 @@ package com.leisure.energyjam.person
 			
 			drawDirection();
 			initYells();
+			startYourEngines();
 		}
 		
 		private var _speed:Number;
@@ -217,6 +220,12 @@ package com.leisure.energyjam.person
 					{
 						yellChannel.stop();
 					}
+					
+					if(engineChannel)
+					{
+						engineChannel.stop();
+					}
+					
 					var randIndex:int = Math.floor(Math.random()*unplayed.length);
 					yell = unplayed[randIndex];
 					
@@ -228,6 +237,13 @@ package com.leisure.energyjam.person
 						played = new Array();
 					}
 					yellChannel = yell.play();
+					
+					var engine:Sound = engineForDirection;
+					if(engine != null)
+					{
+						engineChannel = engine.play();
+					}
+					
 					drawDirection();
 				}
 			}
@@ -238,39 +254,49 @@ package com.leisure.energyjam.person
 			removeAllChildren();
 			var skinClass:Class;
 			var overlayClass:Class;
+			var dudeClass:Class;
 			switch(direction)
 			{
 				case UP:
 					skinClass = upSkinClass;
 					overlayClass = upOverlayClass;
+					dudeClass = upDudeClass;
 					break
 				
 				case DOWN:
 					skinClass = downSkinClass;
 					overlayClass = downOverlayClass;
+					dudeClass = downDudeClass;
 					break;
 				
 				case RIGHT:
 					skinClass = rightSkinClass;
 					overlayClass = rightOverlayClass;
+					dudeClass = rightDudeClass;
 					break;
 				
 				case LEFT:
 					skinClass = leftSkinClass;
 					overlayClass = leftOverlayClass;
+					dudeClass = leftDudeClass;
 					break;
 				
 				case NONE:
 					skinClass = noneSkinClass;
 			}
 			
-			skin = new skinClass();
-			if(overlayClass != null)
+			/*if(overlayClass != null)
 			{
 				overlay = new overlayClass();
 				addChild(overlay);
+			}*/
+			if(dudeClass != null)
+			{
+				dude = new dudeClass();
+				addChild(dude);
 			}
 			
+			skin = new skinClass();
 			addChild(skin);
 		}
 		
@@ -289,24 +315,6 @@ package com.leisure.energyjam.person
 			
 			//"Gains"
 			var yellReq:URLRequest = new URLRequest(gain1SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
-			yellReq = new URLRequest(gain2SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
-			yellReq = new URLRequest(gain3SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
-			yellReq = new URLRequest(gain4SoundSource);
 			yell = new Sound();
 			yell.load(yellReq);
 			
@@ -350,12 +358,6 @@ package com.leisure.energyjam.person
 			
 			unplayed.push(yell);
 			
-			yellReq = new URLRequest(up3SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
 			//"Downs"
 			yellReq = new URLRequest(down1SoundSource);
 			yell = new Sound();
@@ -376,19 +378,7 @@ package com.leisure.energyjam.person
 			unplayed.push(yell);
 			
 			//"Lefts"
-			yellReq = new URLRequest(left1SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
 			yellReq = new URLRequest(left2SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
-			yellReq = new URLRequest(left3SoundSource);
 			yell = new Sound();
 			yell.load(yellReq);
 			
@@ -401,24 +391,55 @@ package com.leisure.energyjam.person
 			
 			unplayed.push(yell);
 			
-			yellReq = new URLRequest(right2SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
-			yellReq = new URLRequest(right3SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
 			//Test
 			yellReq = new URLRequest(test1SoundSource);
 			yell = new Sound();
 			yell.load(yellReq);
 			
 			unplayed.push(yell);
+		}
+		
+		protected function get engineForDirection():Sound
+		{
+			switch(direction)
+			{
+				case UP:
+					return upEngine;
+					
+				case DOWN:
+					return downEngine;
+					
+				case LEFT:
+					return leftEngine;
+					
+				case RIGHT:
+					return rightEngine;
+			}
+			
+			return null;
+		}
+		
+		private function startYourEngines():void
+		{
+			var engineReq:URLRequest;
+			
+			engineReq = new URLRequest(upEngineSource);
+			upEngine = new Sound();
+			upEngine.load(engineReq);
+			
+			engineReq = new URLRequest(downEngineSource);
+			downEngine = new Sound();
+			downEngine.load(engineReq);
+			
+			
+			engineReq = new URLRequest(leftEngineSource);
+			leftEngine = new Sound();
+			leftEngine.load(engineReq);
+			
+			
+			engineReq = new URLRequest(rightEngineSource);
+			rightEngine = new Sound();
+			rightEngine.load(engineReq);
 		}
 		
 		private function removeArrayItemAt(arr:Array, index:int):Array
