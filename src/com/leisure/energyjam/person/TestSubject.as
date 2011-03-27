@@ -39,15 +39,21 @@ package com.leisure.energyjam.person
 		[Embed(source="assets/gloves/dudes/dudeup.png")]
 		private var upDudeClass:Class;
 		
-		[Embed(source="assets/gloves/gloves_blue_down.png")]
-		private var downSkinClass:Class;
+		[Embed(source="assets/gloves/gloves_blue_down01.png")]
+		private var downSkinClass1:Class;
+		[Embed(source="assets/gloves/gloves_blue_down02.png")]
+		private var downSkinClass2:Class;
 		[Embed(source="assets/gloves/overlays/overlay_blue_down.png")]
 		private var downOverlayClass:Class;
 		[Embed(source="assets/gloves/dudes/dudedown.png")]
 		private var downDudeClass:Class;
 		
-		[Embed(source="assets/gloves/gloves_green_left.png")]
-		private var leftSkinClass:Class;
+		[Embed(source="assets/gloves/gloves_green_left01.png")]
+		private var leftSkinClass1:Class;
+		[Embed(source="assets/gloves/gloves_green_left02.png")]
+		private var leftSkinClass2:Class;
+		[Embed(source="assets/gloves/gloves_green_left03.png")]
+		private var leftSkinClass3:Class;
 		[Embed(source="assets/gloves/overlays/overlay_green_left.png")]
 		private var leftOverlayClass:Class;
 		[Embed(source="assets/gloves/dudes/dudeleft.png")]
@@ -64,9 +70,9 @@ package com.leisure.energyjam.person
 		private var noneSkinClass:Class;
 		
 		private var upEngineSource:String = "assets/sounds/UpFist.mp3";
-		private var downEngineSource:String = "assets/sounds/UpFist.mp3";
-		private var rightEngineSource:String = "assets/sounds/UpFist.mp3";
-		private var leftEngineSource:String = "assets/sounds/UpFist.mp3";
+		private var downEngineSource:String = "assets/sounds/Drill.mp3";
+		private var rightEngineSource:String = "assets/sounds/Saw.mp3";
+		private var leftEngineSource:String = "assets/sounds/Turbine.mp3";
 		
 		private var gain1SoundSource:String = "assets/sounds/GainT01.mp3";
 		private var drain1SoundSource:String = "assets/sounds/DrainT01.mp3";
@@ -181,9 +187,11 @@ package com.leisure.energyjam.person
 				transition();
 			}
 			
+			animateMovement();
+			
 			if(direction != NONE)
 			{
-				--energy;
+				energy -= 0.5;
 				if(energy <= 0)
 				{
 					dispatchEvent(new EnergyChangeEvent(EnergyChangeEvent.OUT_OF_POWER));
@@ -264,7 +272,7 @@ package com.leisure.energyjam.person
 					break
 				
 				case DOWN:
-					skinClass = downSkinClass;
+					skinClass = downSkinClass1;
 					overlayClass = downOverlayClass;
 					dudeClass = downDudeClass;
 					break;
@@ -276,7 +284,7 @@ package com.leisure.energyjam.person
 					break;
 				
 				case LEFT:
-					skinClass = leftSkinClass;
+					skinClass = leftSkinClass1;
 					overlayClass = leftOverlayClass;
 					dudeClass = leftDudeClass;
 					break;
@@ -294,6 +302,44 @@ package com.leisure.energyjam.person
 			{
 				dude = new dudeClass();
 				addChild(dude);
+			}
+			
+			skin = new skinClass();
+			addChild(skin);
+		}
+		
+		private function animateMovement():void
+		{
+			switch(direction)
+			{
+				case DOWN:
+					if(skin is downSkinClass1)
+					{
+						swapSkin(downSkinClass2);
+					}else{
+						swapSkin(downSkinClass1);
+					}
+					break;
+				
+				case LEFT:
+					if(skin is leftSkinClass1)
+					{
+						swapSkin(leftSkinClass2);
+					}else if(skin is leftSkinClass2)
+					{
+						swapSkin(leftSkinClass3);
+					}else{
+						swapSkin(leftSkinClass1);
+					}
+					break;
+			}
+		}
+		
+		private function swapSkin(skinClass:Class):void
+		{
+			if(skin && contains(skin))
+			{
+				removeChild(skin);
 			}
 			
 			skin = new skinClass();

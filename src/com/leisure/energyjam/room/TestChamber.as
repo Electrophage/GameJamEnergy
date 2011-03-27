@@ -15,7 +15,7 @@ package com.leisure.energyjam.room
 		
 		public static const BLOCK_SIZE:Number = 40.0;
 		
-		[Embed(source="assets/background.jpg")]
+		[Embed(source="assets/background.png")]
 		private var backgroundClass:Class;
 		
 		private var background:Bitmap;

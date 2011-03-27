@@ -13,6 +13,10 @@ package com.leisure.energyjam
 		[Embed(source="assets/credits.png")]
 		private var skinClass:Class;
 		
+		[Embed(source="assets/nextButton.png")]
+		private var nextClass:Class;
+		
+		
 		private var _skin:Bitmap
 
 		public function get skin():Bitmap
@@ -24,6 +28,19 @@ package com.leisure.energyjam
 		{
 			_skin = value;
 		}
+		
+		private var _nextButton:Sprite;
+
+		public function get nextButton():Sprite
+		{
+			return _nextButton;
+		}
+
+		public function set nextButton(value:Sprite):void
+		{
+			_nextButton = value;
+		}
+
 
 		public function Credits()
 		{
@@ -31,6 +48,15 @@ package com.leisure.energyjam
 			
 			skin = new skinClass();
 			addChild(skin);
+			
+			nextButton = new Sprite();
+			nextButton.addChild(new nextClass());
+			nextButton.width = 260;
+			nextButton.height = 44;
+			nextButton.x = 118;
+			nextButton.y = 380;
+			
+			addChild(nextButton);
 		}
 	}
 }

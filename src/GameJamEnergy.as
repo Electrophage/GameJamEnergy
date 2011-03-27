@@ -8,6 +8,7 @@ package
 	import com.leisure.energyjam.person.TestSubject;
 	import com.leisure.energyjam.room.TestChamber;
 	
+	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import flash.events.Event;
 	import flash.events.KeyboardEvent;
@@ -46,16 +47,25 @@ package
 			_gameState = value;
 		}
 		
+		[Embed(source="assets/start.png")]
+		private var startScreenSource:Class;
+		
+		[Embed(source="assets/startButton.png")]
+		private var startButtonSource:Class;
+		
 		private var chamber:TestChamber;
 		private var subject:TestSubject;
 		private var gauge:EnergyGuage;
 		private var startButton:Sprite;
+		private var startScreen:Bitmap;
 		private var credits:Credits;
 		
-		private var musicSource:String = "assets/music/GameJam2.mp3";
+		private var playMusicSource:String = "assets/music/NRG_1.mp3";
+		private var endMusicSource:String = "assets/music/Endsong.mp3";
 		private var powerUpSource:String = "assets/sounds/Powerup.mp3";
 		private var powerDownSource:String = "assets/sounds/PowerDown.mp3";
-		private var music:Sound;
+		private var playMusic:Sound;
+		private var endMusic:Sound;
 		private var powerUp:Sound;
 		private var powerDown:Sound;
 		
@@ -67,9 +77,13 @@ package
 		{
 			gameState = STATE_START;
 			
-			var musicReq:URLRequest = new URLRequest(musicSource);
-			music = new Sound();
-			music.load(musicReq);
+			var musicReq:URLRequest = new URLRequest(playMusicSource);
+			playMusic = new Sound();
+			playMusic.load(musicReq);
+			
+			var endMusicReq:URLRequest = new URLRequest(endMusicSource);
+			endMusic = new Sound();
+			endMusic.load(endMusicReq);
 			
 			var powerUpReq:URLRequest = new URLRequest(powerUpSource);
 			powerUp = new Sound();
@@ -88,6 +102,60 @@ package
 			stage.align = "topLeft";
 			stage.scaleMode = "noScale";
 
+			setUp();
+			initLevel();
+			
+			credits = new Credits();
+			credits.width = WIDTH;
+			credits.height = HEIGHT+100;
+			credits.nextButton.addEventListener(MouseEvent.CLICK, newGame);
+			
+			startScreen = new startScreenSource();
+			startScreen.width = WIDTH;
+			startScreen.height = HEIGHT;
+			
+			startButton = new Sprite()
+			startButton.addChild(new startButtonSource());
+			startButton.width = 260;
+			startButton.height = 44;
+			startButton.x = 118;
+			startButton.y = 334;
+			
+			addChild(startScreen);
+			addChild(startButton);
+			
+			startButton.addEventListener(MouseEvent.CLICK, onStartClicked);
+			
+			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressHandler);
+			addEventListener(Event.ENTER_FRAME, enterFrameHandler);
+		}
+		
+		private function onStartClicked(e:MouseEvent):void
+		{
+			subject.addEventListener(EnergyChangeEvent.OUT_OF_POWER, handleOutOfEnergy);
+			stage.focus = stage;
+			gameState = STATE_RUNNING;
+			removeChild(startButton);
+			removeChild(startScreen);
+		}
+		
+		private function newGame(e:MouseEvent):void
+		{
+			gameState = STATE_START;
+			removeChild(credits);
+			removeChild(subject);
+			removeChild(chamber);
+			removeChild(gauge);
+			musicChannel.stop();
+			musicChannel = null;
+			setUp();
+			initLevel();
+			addChild(startScreen);
+			addChild(startButton);
+		}
+		
+		private function setUp():void
+		{
 			chamber = new TestChamber();
 			chamber.height = TestChamber.DESIRED_HEIGHT;
 			chamber.width = TestChamber.DESIRED_WIDTH;
@@ -106,53 +174,14 @@ package
 			gauge.y = 20;
 			gauge.energy = subject.energy;
 			
-			initLevel();
-			
-			credits = new Credits();
-			credits.width = WIDTH;
-			credits.height = HEIGHT+100;
-			
 			addChild(chamber);
 			addChild(subject);
 			addChild(gauge);
+			
 			gauge.width = 20;
 			gauge.height = TestSubject.MAX_ENERGY;
 			
-			startButton = new Sprite();
-			startButton.graphics.beginFill(0x0000ff);
-			startButton.graphics.drawRoundRect(0,0,100,80,90,90);
-			startButton.graphics.endFill();
-			startButton.x = WIDTH/2 - 50;
-			startButton.y = HEIGHT/2 - 40;
-			startButton.buttonMode = true;
-			
-			var textElement:TextElement = new TextElement();
-			textElement.text = "Volunteer";
-			textElement.elementFormat = new ElementFormat();
-			
-			var textblock:TextBlock = new TextBlock(textElement);
-			var buttonLabel:TextLine = textblock.createTextLine();
-			
-			startButton.addChild(buttonLabel);
-			buttonLabel.x = 30;
-			buttonLabel.y = 30;
-			addChild(startButton);
-			
-			startButton.addEventListener(MouseEvent.CLICK, onStartClicked);
-			
-			stage.addEventListener(KeyboardEvent.KEY_DOWN, keyPressHandler);
-			addEventListener(Event.ENTER_FRAME, enterFrameHandler);
 		}
-		
-		private function onStartClicked(e:MouseEvent):void
-		{
-			subject.addEventListener(EnergyChangeEvent.OUT_OF_POWER, handleOutOfEnergy);
-			stage.focus = stage;
-			gameState = STATE_RUNNING;
-			removeChild(startButton);
-		}
-		
-		
 		
 		private function enterFrameHandler(e:Event):void
 		{
@@ -186,7 +215,7 @@ package
 				e.keyCode == Keyboard.DOWN))
 			{
 				powerUp.play();
-				musicChannel = music.play(0,999,new SoundTransform(0.3));
+				musicChannel = playMusic.play(0,999,new SoundTransform());
 			}
 			
 			switch(e.keyCode)
@@ -224,7 +253,7 @@ package
 			subject.removeEventListener(EnergyChangeEvent.OUT_OF_POWER,handleOutOfEnergy);
 			gameState = STATE_GAME_OVER;
 			musicChannel.stop();
-			musicChannel = null;
+			musicChannel = endMusic.play(0,999);
 			powerDown.play();
 			addChild(credits);
 			setChildIndex(subject,0);
@@ -259,7 +288,7 @@ package
 							chamber.removeBlock(block);
 							continue;
 						}else{
-							subjectEvenWithBlock(block);
+						//	subjectEvenWithBlock(block);
 							return false;
 						}
 					}
@@ -277,6 +306,10 @@ package
 			switch(subject.direction)
 			{
 				case TestSubject.UP:
+					if(blockOrigin.y <= subjectOrigin.y + subject.height/2.0)
+					{
+						return;
+					}
 					subjectOrigin.y++;
 					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
 					{
@@ -287,6 +320,10 @@ package
 					break;
 				
 				case TestSubject.DOWN:
+					if(blockOrigin.y >= subjectOrigin.y + subject.height/2.0)
+					{
+						return;
+					}
 					subjectOrigin.y--;
 					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
 					{
@@ -297,6 +334,10 @@ package
 					break;
 				
 				case TestSubject.RIGHT:
+					if(blockOrigin.x <= subjectOrigin.x + subject.height/2.0)
+					{
+						return;
+					}
 					subjectOrigin.x--;
 					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
 					{
@@ -307,6 +348,10 @@ package
 					break;
 				
 				case TestSubject.LEFT:
+					if(blockOrigin.x >= subjectOrigin.x + subject.height/2.0)
+					{
+						return;
+					}
 					subjectOrigin.x++;
 					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
 					{
