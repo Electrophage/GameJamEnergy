@@ -16,7 +16,7 @@ package
 	import flash.net.URLRequest;
 	import flash.ui.Keyboard;
 	
-	[SWF(width="500", height="500", backgroundColor='#000000', frameRate='30')]
+	[SWF(width="500", height="500", backgroundColor='#000000', frameRate='40')]
 	public class GameJamEnergy extends Sprite
 	{
 		public static const HEIGHT:int = 500;
@@ -30,11 +30,14 @@ package
 		
 		private var musicChannel:SoundChannel;
 		
+		private var breakingBlocks:Array;
+		
 		public function GameJamEnergy()
 		{
 			var musicReq:URLRequest = new URLRequest(musicSource);
 			music = new Sound();
 			music.load(musicReq);
+			breakingBlocks = new Array();
 			addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
 		}
 		
@@ -52,39 +55,16 @@ package
 			subject = new TestSubject();
 			subject.width = TestSubject.DESIRED_WIDTH;
 			subject.height = TestSubject.DESIRED_HEIGHT;
-			subject.x = WIDTH/2.0 - subject.width/2.0;
-			subject.y = HEIGHT/2.0 - subject.height/2.0;
+			subject.x = subjectCenterX;
+			subject.y = subjectCenterY;
 			subject.addEventListener(MovementEvent.MOVE, handleMove);
 			
 			gauge = new EnergyGuage();
-			gauge.width = 20;
-			gauge.height = TestSubject.MAX_ENERGY;
 			gauge.x = 20;
 			gauge.y = 20;
 			gauge.energy = subject.energy;
 			
-			var block:Block = new Block(Block.RED_UP);
-			chamber.addBlockAt(block, 100, 100);
-			
-			block = new Block(Block.GREEN_LEFT);
-			chamber.addBlockAt(block, 110, 110);
-			
-			block = new Block(Block.BLUE_DOWN);
-			chamber.addBlockAt(block, 120, 120);
-			
-			block = new Block(Block.YELLOW_RIGHT);
-			chamber.addBlockAt(block, 130, 130);
-			
-			var i:int;
-			for(i=0;i<250;++i)
-			{
-				chamber.addBlockAt(new Block(Block.WHITE), i, 150);
-			}
-			
-			for(i=0;i<250;++i)
-			{
-				chamber.addBlockAt(new Block(Block.BLACK), i, 170);
-			}
+			initLevel();
 			
 			addChild(chamber);
 			addChild(subject);
@@ -96,15 +76,67 @@ package
 			addEventListener(Event.ENTER_FRAME, enterFrameHandler);
 		}
 		
+		private function initLevel():void
+		{
+			var i:int;
+			var j:int;
+			
+			var rect:Rectangle = new Rectangle(3,3,121,121);
+			chamber.createBlockOfBlocks(rect,Block.WHITE);
+			
+			rect = new Rectangle(25,25,25,25);
+			chamber.createBlockOfBlocks(rect,Block.RED_UP);
+			
+			rect = new Rectangle(75,25,25,25);
+			chamber.createBlockOfBlocks(rect,Block.BLUE_DOWN);
+			
+			rect = new Rectangle(75,75,25,25);
+			chamber.createBlockOfBlocks(rect,Block.GREEN_LEFT);
+			
+			rect = new Rectangle(25,75,25,25);
+			chamber.createBlockOfBlocks(rect,Block.YELLOW_RIGHT);
+			
+			for(i=0;i<125;++i)
+			{
+				chamber.addBlockAt(new Block(Block.BLACK), 0, i);
+				chamber.addBlockAt(new Block(Block.BLACK), 1, i);
+				chamber.addBlockAt(new Block(Block.BLACK), 2, i);
+				chamber.addBlockAt(new Block(Block.BLACK), 122, i);
+				chamber.addBlockAt(new Block(Block.BLACK), 123, i);
+				chamber.addBlockAt(new Block(Block.BLACK), 124, i);
+				chamber.addBlockAt(new Block(Block.BLACK), i, 0);
+				chamber.addBlockAt(new Block(Block.BLACK), i, 1);
+				chamber.addBlockAt(new Block(Block.BLACK), i, 2);
+				chamber.addBlockAt(new Block(Block.BLACK), i, 122);
+				chamber.addBlockAt(new Block(Block.BLACK), i, 123);
+				chamber.addBlockAt(new Block(Block.BLACK), i, 124);
+			}
+		}
+		
 		private function enterFrameHandler(e:Event):void
 		{
 			subject.step();
+			breakBlocks();
+		}
+		
+		private function breakBlocks():void
+		{
+			var block:Block;
+			for(var i:int=breakingBlocks.length-1;i>=0;--i)
+			{
+				block = breakingBlocks[i];
+				if(block && block.animateBreaking())
+				{
+					breakingBlocks = removeArrayItemAt(breakingBlocks, i);
+					chamber.removeChild(block);
+				}
+			}
 		}
 		
 		private function keyPressHandler(e:KeyboardEvent):void
 		{
-			if(musicChannel == null)
-				musicChannel = music.play(0,999);
+			/*if(musicChannel == null)
+				musicChannel = music.play(0,999);*/
 			
 			switch(e.keyCode)
 			{
@@ -161,6 +193,7 @@ package
 						if(block.brokenByDirection(subject.direction))
 						{
 							subject.energy += block.energyChange;
+							breakingBlocks.push(block);
 							chamber.removeBlock(block);
 							continue;
 						}else{
@@ -391,6 +424,17 @@ package
 				case TestSubject.NONE:
 					break;
 			}
+		}
+		
+		
+		private function removeArrayItemAt(arr:Array, index:int):Array
+		{
+			arr[index] = null;
+			arr = arr.filter(function filterFunct(obj:Object, index:int, arr:Array):Boolean
+			{
+				return !(obj == null);
+			});
+			return arr;
 		}
 		
 		protected function get subjectCenteredVert():Boolean

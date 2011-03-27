@@ -6,11 +6,14 @@ package com.leisure.energyjam.room
 	import flash.display.Shape;
 	import flash.display.Sprite;
 	import flash.geom.Point;
+	import flash.geom.Rectangle;
 	
 	public class TestChamber extends Sprite
 	{
 		public static const DESIRED_WIDTH:int = 5000;
 		public static const DESIRED_HEIGHT:int = 5000;
+		
+		public static const BLOCK_SIZE:Number = 40.0;
 		
 		[Embed(source="assets/background.jpg")]
 		private var backgroundClass:Class;
@@ -41,8 +44,8 @@ package com.leisure.energyjam.room
 		{
 			var index:Point = new Point();
 			
-			index.x = Math.floor((-(x)+point.x)/20.0);
-			index.y = Math.floor((-(y)+point.y)/20.0);
+			index.x = Math.floor((-(x)+point.x)/BLOCK_SIZE);
+			index.y = Math.floor((-(y)+point.y)/BLOCK_SIZE);
 			
 			return index;
 		}
@@ -51,8 +54,8 @@ package com.leisure.energyjam.room
 		{
 			var retval:Array = new Array();
 			var indexOrigin:Point = pointToBlockGrid(origin);
-			var indicesLong:int = areaWidth/20;
-			var indicesHigh:int = areaHeight/20;
+			var indicesLong:int = areaWidth/BLOCK_SIZE;
+			var indicesHigh:int = areaHeight/BLOCK_SIZE;
 			var block:Block;
 			for(var i:int=indexOrigin.x;i<indexOrigin.x+indicesLong;++i)
 			{
@@ -72,8 +75,13 @@ package com.leisure.energyjam.room
 		public function addBlock(block:Block):void
 		{
 			var index:Point = blockOriginToBlockSpace(new Point(block.x,block.y));
-			blocks[index.x][index.y] = block;
-			addChild(block);
+			if(blocks[index.x][index.y] != null)
+			{
+				(blocks[index.x][index.y] as Block).type = block.type;
+			}else{
+				blocks[index.x][index.y] = block;
+				addChild(block);
+			}
 		}
 		
 		public function addBlockAt(block:Block, indexX:int, indexY:int):void
@@ -88,29 +96,43 @@ package com.leisure.energyjam.room
 		{
 			var index:Point = blockOriginToBlockSpace(new Point(block.x,block.y));
 			blocks[index.x][index.y] = null;
-			removeChild(block);
+		//	removeChild(block);
+		}
+		
+		public function createBlockOfBlocks(rect:Rectangle, type:String):void
+		{
+			for(var i:int=rect.x;i<rect.right;++i)
+			{
+				for(var j:int=rect.y;j<rect.bottom;++j)
+				{
+					addBlockAt(new Block(type),i,j);
+				}
+			}
 		}
 		
 		private function initChamber():void
 		{
-			background = new backgroundClass();
-			addChild(background);
+		/*	background = new backgroundClass();
+			addChild(background);*/
+			graphics.beginFill(0xffffff,1);
+			graphics.drawRect(0,0,DESIRED_WIDTH,DESIRED_HEIGHT);
+			graphics.endFill();
 		}
 		
 		private function initBlockSpace():void
 		{
-			blocks = new Array(width/20);
+			blocks = new Array(width/BLOCK_SIZE);
 			for(var i:int=0;i<blocks.length;++i)
 			{
-				blocks[i] = new Array(height/20);
+				blocks[i] = new Array(height/BLOCK_SIZE);
 			}
 		}
 		
 		private function blockSpaceToChamber(point:Point):Point
 		{
 			var location:Point = new Point();
-			location.x = point.x*20;
-			location.y = point.y*20;
+			location.x = point.x*BLOCK_SIZE;
+			location.y = point.y*BLOCK_SIZE;
 			return location;
 		}
 		
@@ -118,8 +140,8 @@ package com.leisure.energyjam.room
 		{
 			var index:Point = new Point();
 			
-			index.x = Math.floor(point.x/20.0);
-			index.y = Math.floor(point.y/20.0);
+			index.x = Math.floor(point.x/BLOCK_SIZE);
+			index.y = Math.floor(point.y/BLOCK_SIZE);
 			
 			return index;
 		}

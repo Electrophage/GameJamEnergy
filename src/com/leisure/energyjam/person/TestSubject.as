@@ -22,8 +22,11 @@ package com.leisure.energyjam.person
 		
 		public static const MAX_ENERGY:Number = 300;
 		
-		public static const DESIRED_WIDTH:int = 100;
-		public static const DESIRED_HEIGHT:int = 100;
+		public static const DESIRED_WIDTH:int = 200;
+		public static const DESIRED_HEIGHT:int = 200;
+		
+		private static const MAX_SPEED:int = 40;
+		private static const MIN_SPEED:int = 5;
 		
 		[Embed(source="assets/gloves/gloves_red_up.png")]
 		private var upSkinClass:Class;
@@ -56,8 +59,8 @@ package com.leisure.energyjam.person
 		public function TestSubject()
 		{
 			super();
-			direction = NONE;
-			speed = 20;
+			_direction = NONE;
+			speed = 40;
 			energy = MAX_ENERGY;
 			drawDirection();
 		}
@@ -83,7 +86,16 @@ package com.leisure.energyjam.person
 
 		public function set direction(value:String):void
 		{
-			_direction = value;
+			if(_direction != value)
+			{
+				if(energy <= 0 && _direction == NONE)
+				{
+					return;
+				}else{
+					transitioningTo = value;
+					transitioning = true;
+				}
+			}
 		}
 
 		private var _energy:Number;
@@ -97,6 +109,9 @@ package com.leisure.energyjam.person
 		{
 			_energy = value > MAX_ENERGY ? MAX_ENERGY : value;
 		}
+		
+		private var transitioning:Boolean = false;
+		private var transitioningTo:String;
 
 		public function step():void
 		{
@@ -106,7 +121,10 @@ package com.leisure.energyjam.person
 				drawDirection();
 			}
 			
-			drawDirection();
+			if(transitioning)
+			{
+				transition();
+			}
 			
 			if(direction != NONE)
 			{
@@ -121,6 +139,27 @@ package com.leisure.energyjam.person
 			var myBounds:Rectangle = getBounds(this.parent);
 			
 			return myBounds.intersects(blockBounds);
+		}
+		
+		private function transition():void
+		{
+			if(transitioningTo == direction)
+			{
+				if(speed < MAX_SPEED)
+				{
+					speed += 5;
+				}else{
+					transitioning = false;
+				}
+			}else{
+				if(speed > MIN_SPEED)
+				{
+					speed /= 2;
+				}else{
+					_direction = transitioningTo;
+					drawDirection();
+				}
+			}
 		}
 		
 		private function drawDirection():void
