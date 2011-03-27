@@ -96,6 +96,9 @@ package
 			rect = new Rectangle(25,75,25,25);
 			chamber.createBlockOfBlocks(rect,Block.YELLOW_RIGHT);
 			
+			rect = new Rectangle(60,60,5,5);
+			chamber.clearBlockOfBlocks(rect);
+			
 			for(i=0;i<125;++i)
 			{
 				chamber.addBlockAt(new Block(Block.BLACK), 0, i);
@@ -135,8 +138,8 @@ package
 		
 		private function keyPressHandler(e:KeyboardEvent):void
 		{
-			/*if(musicChannel == null)
-				musicChannel = music.play(0,999);*/
+			if(musicChannel == null)
+				musicChannel = music.play(0,999);
 			
 			switch(e.keyCode)
 			{
@@ -425,7 +428,6 @@ package
 					break;
 			}
 		}
-		
 		
 		private function removeArrayItemAt(arr:Array, index:int):Array
 		{

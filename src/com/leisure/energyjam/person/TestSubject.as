@@ -6,6 +6,9 @@ package com.leisure.energyjam.person
 	import flash.display.Bitmap;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
+	import flash.media.Sound;
+	import flash.media.SoundChannel;
+	import flash.net.URLRequest;
 	
 	import mx.core.mx_internal;
 	import mx.events.MoveEvent;
@@ -43,6 +46,40 @@ package com.leisure.energyjam.person
 		[Embed(source="assets/gloves/gloves_white_stop.png")]
 		private var noneSkinClass:Class;
 		
+		private var gain1SoundSource:String = "assets/sounds/GainT01.mp3";
+		private var gain2SoundSource:String = "assets/sounds/GainT02.mp3";
+		private var gain3SoundSource:String = "assets/sounds/GainT03.mp3";
+		private var gain4SoundSource:String = "assets/sounds/GainT04.mp3";
+		
+		private var drain1SoundSource:String = "assets/sounds/DrainT01.mp3";
+		private var drain2SoundSource:String = "assets/sounds/DrainT02.mp3";
+		private var drain3SoundSource:String = "assets/sounds/DrainT03.mp3";
+		private var drain4SoundSource:String = "assets/sounds/DrainT04.mp3";
+		
+		private var down1SoundSource:String = "assets/sounds/DownT01.mp3";
+		private var down2SoundSource:String = "assets/sounds/DownT02.mp3";
+		private var down3SoundSource:String = "assets/sounds/DownT03.mp3";
+		
+		private var left1SoundSource:String = "assets/sounds/LeftT01.mp3";
+		private var left2SoundSource:String = "assets/sounds/LeftT02.mp3";
+		private var left3SoundSource:String = "assets/sounds/LeftT03.mp3";
+		
+		private var right1SoundSource:String = "assets/sounds/RightT01.mp3";
+		private var right2SoundSource:String = "assets/sounds/RightT02.mp3";
+		private var right3SoundSource:String = "assets/sounds/RightT03.mp3";
+		
+		private var up1SoundSource:String = "assets/sounds/UpT01.mp3";
+		private var up2SoundSource:String = "assets/sounds/UpT02.mp3";
+		private var up3SoundSource:String = "assets/sounds/UpT03.mp3";
+		
+		private var test1SoundSource:String = "assets/sounds/TestT01.mp3";
+		
+		private var yell:Sound;
+		private var yellChannel:SoundChannel;
+		
+		private var unplayed:Array;
+		private var played:Array;
+		
 		private var _skin:Bitmap;
 
 		public function get skin():Bitmap
@@ -54,7 +91,6 @@ package com.leisure.energyjam.person
 		{
 			_skin = value;
 		}
-
 		
 		public function TestSubject()
 		{
@@ -62,7 +98,9 @@ package com.leisure.energyjam.person
 			_direction = NONE;
 			speed = 40;
 			energy = MAX_ENERGY;
+			
 			drawDirection();
+			initYells();
 		}
 		
 		private var _speed:Number;
@@ -157,6 +195,21 @@ package com.leisure.energyjam.person
 					speed /= 2;
 				}else{
 					_direction = transitioningTo;
+					if(yellChannel)
+					{
+						yellChannel.stop();
+					}
+					var randIndex:int = Math.floor(Math.random()*unplayed.length);
+					yell = unplayed[randIndex];
+					
+					played.push(yell);
+					unplayed = removeArrayItemAt(unplayed,randIndex);
+					if(unplayed.length == 0)
+					{
+						unplayed = played;
+						played = new Array();
+					}
+					yellChannel = yell.play();
 					drawDirection();
 				}
 			}
@@ -198,6 +251,155 @@ package com.leisure.energyjam.person
 			{
 				removeChildAt(i);
 			}
+		}
+		
+		private function initYells():void
+		{
+			unplayed = new Array();
+			played = new Array();
+			
+			//"Gains"
+			var yellReq:URLRequest = new URLRequest(gain1SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			yellReq = new URLRequest(gain2SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			yellReq = new URLRequest(gain3SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			yellReq = new URLRequest(gain4SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			//"Drains"
+			yellReq = new URLRequest(drain1SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			yellReq = new URLRequest(drain2SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			yellReq = new URLRequest(drain3SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			yellReq = new URLRequest(drain4SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			//"Ups"
+			yellReq = new URLRequest(up1SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			yellReq = new URLRequest(up2SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			yellReq = new URLRequest(up3SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			//"Downs"
+			yellReq = new URLRequest(down1SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			yellReq = new URLRequest(down2SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			yellReq = new URLRequest(down3SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			//"Lefts"
+			yellReq = new URLRequest(left1SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			yellReq = new URLRequest(left2SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			yellReq = new URLRequest(left3SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			//"Rights"
+			yellReq = new URLRequest(right1SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			yellReq = new URLRequest(right2SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			yellReq = new URLRequest(right3SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+			
+			//Test
+			yellReq = new URLRequest(test1SoundSource);
+			yell = new Sound();
+			yell.load(yellReq);
+			
+			unplayed.push(yell);
+		}
+		
+		private function removeArrayItemAt(arr:Array, index:int):Array
+		{
+			arr[index] = null;
+			arr = arr.filter(function filterFunct(obj:Object, index:int, arr:Array):Boolean
+			{
+				return !(obj == null);
+			});
+			return arr;
 		}
 	}
 }

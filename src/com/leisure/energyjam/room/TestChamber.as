@@ -110,10 +110,25 @@ package com.leisure.energyjam.room
 			}
 		}
 		
+		public function clearBlockOfBlocks(rect:Rectangle):void
+		{
+			var block:Block;
+			for(var i:int=rect.x;i<rect.right;++i)
+			{
+				for(var j:int=rect.y;j<rect.bottom;++j)
+				{
+					block = blocks[i][j];
+					if(block != null)
+					{
+						removeBlock(block);
+						removeChild(block);
+					}
+				}
+			}
+		}
+		
 		private function initChamber():void
 		{
-		/*	background = new backgroundClass();
-			addChild(background);*/
 			graphics.beginFill(0xffffff,1);
 			graphics.drawRect(0,0,DESIRED_WIDTH,DESIRED_HEIGHT);
 			graphics.endFill();
