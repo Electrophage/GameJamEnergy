@@ -1,6 +1,5 @@
-package
+package com.leisure.energyjam
 {
-	import com.leisure.energyjam.Credits;
 	import com.leisure.energyjam.blocks.Block;
 	import com.leisure.energyjam.eventz.EnergyChangeEvent;
 	import com.leisure.energyjam.eventz.MovementEvent;
@@ -62,8 +61,12 @@ package
 		private var startScreen:Bitmap;
 		private var credits:Credits;
 		
+		
+/*		[Embed(source="assets/music/idle1.mp3")]
+		private var idleClass:Class;
+*/		
 		private var playMusicSource:String = "assets/music/NRG_1.mp3";
-		private var idleMusicSource:String = "assets/music/Idle1.mp3";
+		private var idleMusicSource:String = "assets/music/idle1.mp3";
 		private var endMusicSource:String = "assets/music/Endsong.mp3";
 		private var powerUpSource:String = "assets/sounds/Powerup.mp3";
 		private var powerDownSource:String = "assets/sounds/PowerDown.mp3";
@@ -81,25 +84,44 @@ package
 		{
 			gameState = STATE_START;
 			
-			var musicReq:URLRequest = new URLRequest(playMusicSource);
-			playMusic = new Sound();
-			playMusic.load(musicReq);
+			try{
+				var musicReq:URLRequest = new URLRequest(playMusicSource);
+				playMusic = new Sound();
+				playMusic.load(musicReq);
+			}catch(e:Error)
+			{
+			}
 			
-			var idleMusicReq:URLRequest = new URLRequest(idleMusicSource);
-			idleMusic = new Sound();
-			idleMusic.load(idleMusicReq);
+			try{
+				var idleMusicReq:URLRequest = new URLRequest(idleMusicSource);
+				idleMusic = new Sound();
+				idleMusic.load(idleMusicReq);
+			}catch(e:Error)
+			{
+			}
+			try{
+				var endMusicReq:URLRequest = new URLRequest(endMusicSource);
+				endMusic = new Sound();
+				endMusic.load(endMusicReq);
+			}catch(e:Error)
+			{
+			}
 			
-			var endMusicReq:URLRequest = new URLRequest(endMusicSource);
-			endMusic = new Sound();
-			endMusic.load(endMusicReq);
+			try{
+				var powerUpReq:URLRequest = new URLRequest(powerUpSource);
+				powerUp = new Sound();
+				powerUp.load(powerUpReq);
+			}catch(e:Error)
+			{
+			}
 			
-			var powerUpReq:URLRequest = new URLRequest(powerUpSource);
-			powerUp = new Sound();
-			powerUp.load(powerUpReq);
-			
-			var powerDownReq:URLRequest = new URLRequest(powerDownSource);
-			powerDown = new Sound();
-			powerDown.load(powerDownReq);
+			try{
+				var powerDownReq:URLRequest = new URLRequest(powerDownSource);
+				powerDown = new Sound();
+				powerDown.load(powerDownReq);
+			}catch(e:Error)
+			{
+			}
 			
 			breakingBlocks = new Array();
 			addEventListener(Event.ADDED_TO_STAGE, handleAddedToStage);
@@ -143,7 +165,12 @@ package
 			subject.addEventListener(EnergyChangeEvent.OUT_OF_POWER, handleOutOfEnergy);
 			stage.focus = stage;
 			gameState = STATE_RUNNING;
-			musicChannel = idleMusic.play(0,999, new SoundTransform(0.3));
+			try{
+				musicChannel = idleMusic.play(0,999, new SoundTransform(0.3));
+			}catch(e:Error)
+			{
+				
+			}
 			removeChild(startButton);
 			removeChild(startScreen);
 		}
@@ -226,9 +253,14 @@ package
 				e.keyCode == Keyboard.RIGHT ||
 				e.keyCode == Keyboard.DOWN))
 			{
-				powerUp.play();
-				musicChannel.stop();
-				musicChannel = playMusic.play(0,999,new SoundTransform());
+				try{
+					powerUp.play();
+					musicChannel.stop();
+					musicChannel = playMusic.play(0,999,new SoundTransform());
+				}catch(e:Error)
+				{
+					
+				}
 				gameMusicRunning = true;
 			}
 			
@@ -266,9 +298,13 @@ package
 		{
 			subject.removeEventListener(EnergyChangeEvent.OUT_OF_POWER,handleOutOfEnergy);
 			gameState = STATE_GAME_OVER;
-			musicChannel.stop();
-			musicChannel = endMusic.play(0,999);
-			powerDown.play();
+			try{
+				musicChannel.stop();
+				musicChannel = endMusic.play(0,999);
+				powerDown.play();
+			}catch(e:Error)
+			{
+			}
 			addChild(credits);
 			setChildIndex(subject,0);
 		}
@@ -308,8 +344,7 @@ package
 							chamber.removeBlock(block);
 							continue;
 						}else{
-							subjectEvenWithBlock(block);
-							return false;
+							return subjectEvenWithBlock(block);
 						}
 					}
 				}
@@ -318,7 +353,7 @@ package
 			return true;
 		}
 		
-		private function subjectEvenWithBlock(block:Block):void
+		private function subjectEvenWithBlock(block:Block):Boolean
 		{
 			var subjectOrigin:Point = new Point(subject.x,subject.y);
 			var blockOrigin:Point = block.getBounds(this).topLeft;
@@ -326,9 +361,9 @@ package
 			switch(subject.direction)
 			{
 				case TestSubject.UP:
-					if(blockOrigin.y <= subjectOrigin.y + subject.height/2.0)
+					if(blockOrigin.y >= subjectOrigin.y + 50)
 					{
-						return;
+						return true;
 					}
 					subjectOrigin.y++;
 					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
@@ -340,9 +375,9 @@ package
 					break;
 				
 				case TestSubject.DOWN:
-					if(blockOrigin.y >= subjectOrigin.y + subject.height/2.0)
+					if(blockOrigin.y <= subjectOrigin.y + (subject.height - subject.skin.y - 50))
 					{
-						return;
+						return true;
 					}
 					subjectOrigin.y--;
 					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
@@ -354,9 +389,9 @@ package
 					break;
 				
 				case TestSubject.RIGHT:
-					if(blockOrigin.x <= subjectOrigin.x + subject.height/2.0)
+					if(blockOrigin.x <= subjectOrigin.x + (subject.width - 50))
 					{
-						return;
+						return true;
 					}
 					subjectOrigin.x--;
 					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
@@ -368,9 +403,9 @@ package
 					break;
 				
 				case TestSubject.LEFT:
-					if(blockOrigin.x >= subjectOrigin.x + subject.height/2.0)
+					if(blockOrigin.x >= subjectOrigin.x + 50)
 					{
-						return;
+						return true;
 					}
 					subjectOrigin.x++;
 					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
@@ -381,6 +416,8 @@ package
 					
 					break
 			}
+			
+			return false;
 		}
 		
 		private function moveField(direction:String, speed:Number):void

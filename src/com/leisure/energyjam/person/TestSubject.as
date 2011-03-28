@@ -267,12 +267,22 @@ package com.leisure.energyjam.person
 						unplayed = played;
 						played = new Array();
 					}
-					yellChannel = yell.play();
+					try{
+						yellChannel = yell.play();
+					}catch(e:Error)
+					{
+						
+					}
 					
 					var engine:Sound = engineForDirection;
 					if(engine != null)
 					{
-						engineChannel = engine.play(0,999);
+						try{
+							engineChannel = engine.play(0,999);
+						}catch(e:Error)
+						{
+							
+						}
 					}
 					
 					drawDirection();
@@ -458,90 +468,94 @@ package com.leisure.energyjam.person
 			unplayed = new Array();
 			played = new Array();
 			
-			//"Gains"
-			var yellReq:URLRequest = new URLRequest(gain1SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
-			//"Drains"
-			yellReq = new URLRequest(drain1SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
-			yellReq = new URLRequest(drain2SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
-			yellReq = new URLRequest(drain3SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
-			yellReq = new URLRequest(drain4SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
-			//"Ups"
-			yellReq = new URLRequest(up1SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
-			yellReq = new URLRequest(up2SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
-			//"Downs"
-			yellReq = new URLRequest(down1SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
-			yellReq = new URLRequest(down2SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
-			yellReq = new URLRequest(down3SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
-			//"Lefts"
-			yellReq = new URLRequest(left2SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
-			//"Rights"
-			yellReq = new URLRequest(right1SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
-			
-			//Test
-			yellReq = new URLRequest(test1SoundSource);
-			yell = new Sound();
-			yell.load(yellReq);
-			
-			unplayed.push(yell);
+			try{
+				//"Gains"
+				var yellReq:URLRequest = new URLRequest(gain1SoundSource);
+				yell = new Sound();
+				yell.load(yellReq);
+				
+				unplayed.push(yell);
+				
+				//"Drains"
+				yellReq = new URLRequest(drain1SoundSource);
+				yell = new Sound();
+				yell.load(yellReq);
+				
+				unplayed.push(yell);
+				
+				yellReq = new URLRequest(drain2SoundSource);
+				yell = new Sound();
+				yell.load(yellReq);
+				
+				unplayed.push(yell);
+				
+				yellReq = new URLRequest(drain3SoundSource);
+				yell = new Sound();
+				yell.load(yellReq);
+				
+				unplayed.push(yell);
+				
+				yellReq = new URLRequest(drain4SoundSource);
+				yell = new Sound();
+				yell.load(yellReq);
+				
+				unplayed.push(yell);
+				
+				//"Ups"
+				yellReq = new URLRequest(up1SoundSource);
+				yell = new Sound();
+				yell.load(yellReq);
+				
+				unplayed.push(yell);
+				
+				yellReq = new URLRequest(up2SoundSource);
+				yell = new Sound();
+				yell.load(yellReq);
+				
+				unplayed.push(yell);
+				
+				//"Downs"
+				yellReq = new URLRequest(down1SoundSource);
+				yell = new Sound();
+				yell.load(yellReq);
+				
+				unplayed.push(yell);
+				
+				yellReq = new URLRequest(down2SoundSource);
+				yell = new Sound();
+				yell.load(yellReq);
+				
+				unplayed.push(yell);
+				
+				yellReq = new URLRequest(down3SoundSource);
+				yell = new Sound();
+				yell.load(yellReq);
+				
+				unplayed.push(yell);
+				
+				//"Lefts"
+				yellReq = new URLRequest(left2SoundSource);
+				yell = new Sound();
+				yell.load(yellReq);
+				
+				unplayed.push(yell);
+				
+				//"Rights"
+				yellReq = new URLRequest(right1SoundSource);
+				yell = new Sound();
+				yell.load(yellReq);
+				
+				unplayed.push(yell);
+				
+				//Test
+				yellReq = new URLRequest(test1SoundSource);
+				yell = new Sound();
+				yell.load(yellReq);
+				
+				unplayed.push(yell);
+			}catch(e:Error){
+				
+			}
 		}
 		
 		protected function get engineForDirection():Sound
