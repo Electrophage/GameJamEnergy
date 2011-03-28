@@ -375,10 +375,10 @@ package com.leisure.energyjam
 					break;
 				
 				case TestSubject.DOWN:
-					if(blockOrigin.y <= subjectOrigin.y + (subject.height - subject.skin.y - 50))
+					/*if(blockOrigin.y <= subjectOrigin.y + (subject.height - subject.skin.y - 50))
 					{
 						return true;
-					}
+					}*/
 					subjectOrigin.y--;
 					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
 					{
@@ -389,10 +389,10 @@ package com.leisure.energyjam
 					break;
 				
 				case TestSubject.RIGHT:
-					if(blockOrigin.x <= subjectOrigin.x + (subject.width - 50))
+					/*if(blockOrigin.x <= subjectOrigin.x + (subject.width - 50))
 					{
 						return true;
-					}
+					}*/
 					subjectOrigin.x--;
 					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
 					{
