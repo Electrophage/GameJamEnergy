@@ -92,16 +92,61 @@ package com.leisure.energyjam.person
 		[Embed(source="assets/gloves/gloves_white_stop.png")]
 		private var noneSkinClass:Class;
 		
-		private var upEngineSource:String = "assets/sounds/UpFist.mp3";
+		
+		[Embed(source="assets/sounds/UpFist.mp3")]
+		private var upEngineClass:Class;
+		[Embed(source="assets/sounds/Drill.mp3")]
+		private var downEngineClass:Class;
+		[Embed(source="assets/sounds/Saw.mp3")]
+		private var rightEngineClass:Class;
+		[Embed(source="assets/sounds/Turbine.mp3")]
+		private var leftEngineClass:Class;
+		
+		/*private var upEngineSource:String = "assets/sounds/UpFist.mp3";
 		private var downEngineSource:String = "assets/sounds/Drill.mp3";
 		private var rightEngineSource:String = "assets/sounds/Saw.mp3";
-		private var leftEngineSource:String = "assets/sounds/Turbine.mp3";
+		private var leftEngineSource:String = "assets/sounds/Turbine.mp3";*/
+		
+		[Embed(source="assets/sounds/GainT01.mp3")]
+		private var gain1Class:Class;
+		
+		[Embed(source="assets/sounds/DrainT01.mp3")]
+		private var drain1Class:Class;
+		[Embed(source="assets/sounds/DrainT02.mp3")]
+		private var drain2Class:Class;
+		[Embed(source="assets/sounds/DrainT03.mp3")]
+		private var drain3Class:Class;
+		[Embed(source="assets/sounds/DrainT04.mp3")]
+		private var drain4Class:Class;
+		
+		[Embed(source="assets/sounds/DownT01.mp3")]
+		private var down1Class:Class;
+		[Embed(source="assets/sounds/DownT02.mp3")]
+		private var down2Class:Class;
+		[Embed(source="assets/sounds/DownT03.mp3")]
+		private var down3Class:Class;
+		
+		[Embed(source="assets/sounds/LeftT02.mp3")]
+		private var left2Class:Class;
+		
+		[Embed(source="assets/sounds/RightT01.mp3")]
+		private var right1Class:Class;
+		
+		[Embed(source="assets/sounds/UpT01.mp3")]
+		private var up1Class:Class;
+		[Embed(source="assets/sounds/UpT02.mp3")]
+		private var up2Class:Class;
+		
+		[Embed(source="assets/sounds/TestT01.mp3")]
+		private var test1Class:Class;
 		
 		private var gain1SoundSource:String = "assets/sounds/GainT01.mp3";
+		
 		private var drain1SoundSource:String = "assets/sounds/DrainT01.mp3";
 		private var drain2SoundSource:String = "assets/sounds/DrainT02.mp3";
 		private var drain3SoundSource:String = "assets/sounds/DrainT03.mp3";
 		private var drain4SoundSource:String = "assets/sounds/DrainT04.mp3";
+		
 		private var down1SoundSource:String = "assets/sounds/DownT01.mp3";
 		private var down2SoundSource:String = "assets/sounds/DownT02.mp3";
 		private var down3SoundSource:String = "assets/sounds/DownT03.mp3";
@@ -268,7 +313,7 @@ package com.leisure.energyjam.person
 						played = new Array();
 					}
 					try{
-						yellChannel = yell.play();
+						yellChannel = yell.play(0,0,new SoundTransform(1.0));
 					}catch(e:Error)
 					{
 						
@@ -278,7 +323,7 @@ package com.leisure.energyjam.person
 					if(engine != null)
 					{
 						try{
-							engineChannel = engine.play(0,999);
+							engineChannel = engine.play(0,999,sTransform);
 						}catch(e:Error)
 						{
 							
@@ -470,87 +515,87 @@ package com.leisure.energyjam.person
 			
 			try{
 				//"Gains"
-				var yellReq:URLRequest = new URLRequest(gain1SoundSource);
-				yell = new Sound();
-				yell.load(yellReq);
+			//	var yellReq:URLRequest = new URLRequest(gain1SoundSource);
+				yell = new gain1Class();
+			//	yell.load(yellReq);
 				
 				unplayed.push(yell);
 				
 				//"Drains"
-				yellReq = new URLRequest(drain1SoundSource);
-				yell = new Sound();
-				yell.load(yellReq);
+			//	yellReq = new URLRequest(drain1SoundSource);
+				yell = new drain1Class();
+			//	yell.load(yellReq);
 				
 				unplayed.push(yell);
 				
-				yellReq = new URLRequest(drain2SoundSource);
-				yell = new Sound();
-				yell.load(yellReq);
+				//	yellReq = new URLRequest(drain1SoundSource);
+				yell = new drain2Class();
+				//	yell.load(yellReq);
 				
 				unplayed.push(yell);
 				
-				yellReq = new URLRequest(drain3SoundSource);
-				yell = new Sound();
-				yell.load(yellReq);
+				//	yellReq = new URLRequest(drain1SoundSource);
+				yell = new drain3Class();
+				//	yell.load(yellReq);
 				
 				unplayed.push(yell);
 				
-				yellReq = new URLRequest(drain4SoundSource);
-				yell = new Sound();
-				yell.load(yellReq);
+				//	yellReq = new URLRequest(drain1SoundSource);
+				yell = new drain4Class();
+				//	yell.load(yellReq);
 				
 				unplayed.push(yell);
 				
 				//"Ups"
-				yellReq = new URLRequest(up1SoundSource);
-				yell = new Sound();
-				yell.load(yellReq);
+			//	yellReq = new URLRequest(up1SoundSource);
+				yell = new up1Class();
+			//	yell.load(yellReq);
 				
 				unplayed.push(yell);
 				
-				yellReq = new URLRequest(up2SoundSource);
-				yell = new Sound();
-				yell.load(yellReq);
+			//	yellReq = new URLRequest(up2SoundSource);
+				yell = new up2Class();
+			//	yell.load(yellReq);
 				
 				unplayed.push(yell);
 				
 				//"Downs"
-				yellReq = new URLRequest(down1SoundSource);
-				yell = new Sound();
-				yell.load(yellReq);
+			//	yellReq = new URLRequest(down1SoundSource);
+				yell = new down1Class();
+			//	yell.load(yellReq);
 				
 				unplayed.push(yell);
 				
-				yellReq = new URLRequest(down2SoundSource);
-				yell = new Sound();
-				yell.load(yellReq);
+			//	yellReq = new URLRequest(down2SoundSource);
+				yell = new down2Class();
+			//	yell.load(yellReq);
 				
 				unplayed.push(yell);
 				
-				yellReq = new URLRequest(down3SoundSource);
-				yell = new Sound();
-				yell.load(yellReq);
+			//	yellReq = new URLRequest(down3SoundSource);
+				yell = new down3Class();
+			//	yell.load(yellReq);
 				
 				unplayed.push(yell);
 				
 				//"Lefts"
-				yellReq = new URLRequest(left2SoundSource);
-				yell = new Sound();
-				yell.load(yellReq);
+			//	yellReq = new URLRequest(left2SoundSource);
+				yell = new left2Class();
+			//	yell.load(yellReq);
 				
 				unplayed.push(yell);
 				
 				//"Rights"
-				yellReq = new URLRequest(right1SoundSource);
-				yell = new Sound();
-				yell.load(yellReq);
+			//	yellReq = new URLRequest(right1SoundSource);
+				yell = new right1Class();
+			//	yell.load(yellReq);
 				
 				unplayed.push(yell);
 				
 				//Test
-				yellReq = new URLRequest(test1SoundSource);
-				yell = new Sound();
-				yell.load(yellReq);
+			//	yellReq = new URLRequest(test1SoundSource);
+				yell = new test1Class();
+			//	yell.load(yellReq);
 				
 				unplayed.push(yell);
 			}catch(e:Error){
@@ -558,24 +603,26 @@ package com.leisure.energyjam.person
 			}
 		}
 		
+		private var sTransform:SoundTransform;
+		
 		protected function get engineForDirection():Sound
 		{
 			switch(direction)
 			{
 				case UP:
-					soundTransform.volume = 1.0;
+					sTransform = new SoundTransform(0.8);
 					return upEngine;
 					
 				case DOWN:
-					soundTransform.volume = 1.0;
+					sTransform = new SoundTransform(0.8);
 					return downEngine;
 					
 				case LEFT:
-					soundTransform.volume = 1.0;
+					sTransform = new SoundTransform(0.8);
 					return leftEngine;
 					
 				case RIGHT:
-					soundTransform.volume = 0.3;
+					sTransform = new SoundTransform(0.3);
 					return rightEngine;
 			}
 			
@@ -586,23 +633,23 @@ package com.leisure.energyjam.person
 		{
 			var engineReq:URLRequest;
 			
-			engineReq = new URLRequest(upEngineSource);
-			upEngine = new Sound();
-			upEngine.load(engineReq);
+			//engineReq = new URLRequest(upEngineSource);
+			upEngine = new upEngineClass();
+			//upEngine.load(engineReq);
 			
-			engineReq = new URLRequest(downEngineSource);
-			downEngine = new Sound();
-			downEngine.load(engineReq);
-			
-			
-			engineReq = new URLRequest(leftEngineSource);
-			leftEngine = new Sound();
-			leftEngine.load(engineReq);
+			//engineReq = new URLRequest(downEngineSource);
+			downEngine = new downEngineClass();
+			//downEngine.load(engineReq);
 			
 			
-			engineReq = new URLRequest(rightEngineSource);
-			rightEngine = new Sound();
-			rightEngine.load(engineReq);
+			//engineReq = new URLRequest(leftEngineSource);
+			leftEngine = new leftEngineClass();
+			//leftEngine.load(engineReq);
+			
+			
+			//engineReq = new URLRequest(rightEngineSource);
+			rightEngine = new rightEngineClass();
+			//rightEngine.load(engineReq);
 		}
 		
 		private function removeArrayItemAt(arr:Array, index:int):Array

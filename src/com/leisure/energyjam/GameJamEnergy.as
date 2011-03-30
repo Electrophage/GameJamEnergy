@@ -25,6 +25,7 @@ package com.leisure.energyjam
 	import flash.ui.Keyboard;
 	
 	import flashx.textLayout.factory.TruncationOptions;
+	import flashx.textLayout.formats.Direction;
 	
 	[SWF(width="500", height="500", backgroundColor='#000000', frameRate='40')]
 	public class GameJamEnergy extends Sprite
@@ -62,12 +63,24 @@ package com.leisure.energyjam
 		private var credits:Credits;
 		
 		
-/*		[Embed(source="assets/music/idle1.mp3")]
+		[Embed(source="assets/music/idle1.mp3")]
 		private var idleClass:Class;
-*/		
+		
+		[Embed(source="assets/music/NRG_1.mp3")]
+		private var playMusicClass:Class;
+		
+		[Embed(source="assets/music/EndSong.mp3")]
+		private var endMusicClass:Class;
+		
+		[Embed(source="assets/sounds/Powerup.mp3")]
+		private var powerUpClass:Class;
+		
+		[Embed(source="assets/sounds/PowerDown.mp3")]
+		private var powerDownClass:Class;
+		
 		private var playMusicSource:String = "assets/music/NRG_1.mp3";
 		private var idleMusicSource:String = "assets/music/idle1.mp3";
-		private var endMusicSource:String = "assets/music/Endsong.mp3";
+		private var endMusicSource:String = "assets/music/EndSong.mp3";
 		private var powerUpSource:String = "assets/sounds/Powerup.mp3";
 		private var powerDownSource:String = "assets/sounds/PowerDown.mp3";
 		private var playMusic:Sound;
@@ -85,40 +98,40 @@ package com.leisure.energyjam
 			gameState = STATE_START;
 			
 			try{
-				var musicReq:URLRequest = new URLRequest(playMusicSource);
-				playMusic = new Sound();
-				playMusic.load(musicReq);
+				//var musicReq:URLRequest = new URLRequest(playMusicSource);
+				playMusic = new playMusicClass();
+				//playMusic.load(musicReq);
 			}catch(e:Error)
 			{
 			}
 			
 			try{
-				var idleMusicReq:URLRequest = new URLRequest(idleMusicSource);
-				idleMusic = new Sound();
-				idleMusic.load(idleMusicReq);
+				//var idleMusicReq:URLRequest = new URLRequest(idleMusicSource);
+				idleMusic = new idleClass();
+				//idleMusic.load(idleMusicReq);
 			}catch(e:Error)
 			{
 			}
 			try{
-				var endMusicReq:URLRequest = new URLRequest(endMusicSource);
-				endMusic = new Sound();
-				endMusic.load(endMusicReq);
-			}catch(e:Error)
-			{
-			}
-			
-			try{
-				var powerUpReq:URLRequest = new URLRequest(powerUpSource);
-				powerUp = new Sound();
-				powerUp.load(powerUpReq);
+				//var endMusicReq:URLRequest = new URLRequest(endMusicSource);
+				endMusic = new endMusicClass();
+//				endMusic.load(endMusicReq);
 			}catch(e:Error)
 			{
 			}
 			
 			try{
-				var powerDownReq:URLRequest = new URLRequest(powerDownSource);
-				powerDown = new Sound();
-				powerDown.load(powerDownReq);
+				//var powerUpReq:URLRequest = new URLRequest(powerUpSource);
+				powerUp = new powerUpClass();
+				//powerUp.load(powerUpReq);
+			}catch(e:Error)
+			{
+			}
+			
+			try{
+				//var powerDownReq:URLRequest = new URLRequest(powerDownSource);
+				powerDown = new powerDownClass();
+				//powerDown.load(powerDownReq);
 			}catch(e:Error)
 			{
 			}
@@ -166,10 +179,10 @@ package com.leisure.energyjam
 			stage.focus = stage;
 			gameState = STATE_RUNNING;
 			try{
-				musicChannel = idleMusic.play(0,999, new SoundTransform(0.3));
+				musicChannel = idleMusic.play(0,999, new SoundTransform(0.1));
 			}catch(e:Error)
 			{
-				
+				trace(e.name);
 			}
 			removeChild(startButton);
 			removeChild(startScreen);
@@ -256,7 +269,7 @@ package com.leisure.energyjam
 				try{
 					powerUp.play();
 					musicChannel.stop();
-					musicChannel = playMusic.play(0,999,new SoundTransform());
+					musicChannel = playMusic.play(0,999,new SoundTransform(0.3));
 				}catch(e:Error)
 				{
 					
@@ -286,10 +299,10 @@ package com.leisure.energyjam
 		
 		private function handleMove(e:MovementEvent):void
 		{
-			if(doIntersections())
+			if(doIntersections(true))
 			{
 				moveField(subject.direction, subject.speed);
-				doIntersections();
+				doIntersections(false);
 			}
 			gauge.energy = subject.energy;
 		}
@@ -298,13 +311,9 @@ package com.leisure.energyjam
 		{
 			subject.removeEventListener(EnergyChangeEvent.OUT_OF_POWER,handleOutOfEnergy);
 			gameState = STATE_GAME_OVER;
-			try{
-				musicChannel.stop();
-				musicChannel = endMusic.play(0,999);
-				powerDown.play();
-			}catch(e:Error)
-			{
-			}
+			musicChannel.stop();
+			musicChannel = endMusic.play(0,999);
+			powerDown.play();
 			addChild(credits);
 			setChildIndex(subject,0);
 		}
@@ -314,7 +323,7 @@ package com.leisure.energyjam
 		 * @return Whether or not to continue on to moving after this is called 
 		 * 
 		 */		
-		private function doIntersections():Boolean
+		private function doIntersections(firstCall:Boolean):Boolean
 		{
 			var blocks:Array = chamber.blocksInArea(new Point(0,0), WIDTH, HEIGHT);
 			var block:Block;
@@ -343,7 +352,8 @@ package com.leisure.energyjam
 							breakingBlocks.push(block);
 							chamber.removeBlock(block);
 							continue;
-						}else{
+						}else/* if(!firstCall)*/
+						{
 							return subjectEvenWithBlock(block);
 						}
 					}
@@ -355,69 +365,127 @@ package com.leisure.energyjam
 		
 		private function subjectEvenWithBlock(block:Block):Boolean
 		{
-			var subjectOrigin:Point = new Point(subject.x,subject.y);
+			/*if(!blockImportant(block))
+				return true;*/
+			
+			var subjectOrigin:Point = new Point(subject.x+subject.skin.x, subject.y+subject.skin.y);
+			var chamberOffset:Point = new Point(0,0);
 			var blockOrigin:Point = block.getBounds(this).topLeft;
+			var dist:int = 0;
 			
 			switch(subject.direction)
 			{
-				case TestSubject.UP:
-					if(blockOrigin.y >= subjectOrigin.y + 50)
+				//Seems to work okay
+				case TestSubject.DOWN:
+					/*if(blockOrigin.y >= subjectOrigin.y + 50)
 					{
 						return true;
-					}
-					subjectOrigin.y++;
-					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
+					}*/
+					//chamberOrigin.y++;
+					//chamberOrigin.y = chamberOrigin.y >= chamberMaxY ? chamberMaxY : chamberOrigin.y + 1;
+					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255) 
+						&& dist <= subject.speed)
 					{
-						subjectOrigin.y++;
+						//chamberOrigin.y++;
+						chamberOffset.y = chamberOffset.y >= chamberMaxY ? chamberMaxY : chamberOffset.y + 1;
+						++dist;
+						blockOrigin = block.getBounds(this).topLeft.add(chamberOffset);
+						
 					}
-					subject.y = subjectOrigin.y;
+					chamber.y += chamberOffset.y;
 					
 					break;
 				
-				case TestSubject.DOWN:
+				//Doesn't seem to do the backwards thing, but edge behavior is weird, that happens in moveField
+				case TestSubject.UP:
 					/*if(blockOrigin.y <= subjectOrigin.y + (subject.height - subject.skin.y - 50))
 					{
 						return true;
 					}*/
-					subjectOrigin.y--;
-					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
+					//chamberOrigin.y--;
+					//chamberOrigin.y = chamberOrigin.y <= chamberMinY ? chamberMinY : chamberOrigin.y - 1;
+					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255)
+						&& dist <= subject.speed)
 					{
-						subjectOrigin.y--;
+						//chamberOrigin.y--;
+						chamberOffset.y = chamberOffset.y <= chamberMinY ? chamberMinY : chamberOffset.y - 1;
+						++dist;
+						blockOrigin = block.getBounds(this).topLeft.add(chamberOffset);;
 					}
-					subject.y = subjectOrigin.y;
+					chamber.y += chamberOffset.y;
 					
 					break;
 				
-				case TestSubject.RIGHT:
-					/*if(blockOrigin.x <= subjectOrigin.x + (subject.width - 50))
-					{
-						return true;
-					}*/
-					subjectOrigin.x--;
-					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
-					{
-						subjectOrigin.x--;
-					}
-					subject.x = subjectOrigin.x;
-					
-					break;
-				
+				//Need to test moveField, still seems wrong
+				//Backwards bug happens plenty
 				case TestSubject.LEFT:
-					if(blockOrigin.x >= subjectOrigin.x + 50)
+					//chamberOrigin.x--;
+					//chamberOrigin.x = chamberOrigin.x <= chamberMinX ? chamberMinX : chamberOrigin.x - 1;
+					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255)
+						&& dist <= subject.speed)
 					{
-						return true;
+						//chamberOrigin.x--;
+						chamberOffset.x = chamberOffset.x <= chamberMinX ? chamberMinX : chamberOffset.x - 1;
+						++dist;
+						blockOrigin = block.getBounds(this).topLeft.add(chamberOffset);
 					}
-					subjectOrigin.x++;
-					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255))
+					chamber.x += chamberOffset.x;
+					
+					break;
+				
+				//Backwards bug happens occasionally
+				case TestSubject.RIGHT:
+					//chamberOrigin.x++;
+					//chamberOrigin.x = chamberOrigin.x >= chamberMaxX ? chamberMaxX : chamberOrigin.x + 1;
+					while(subject.skin.bitmapData.hitTest(subjectOrigin,255,block.skin.bitmapData,blockOrigin,255)
+						&& dist <= subject.speed)
 					{
-						subjectOrigin.x++;
+						//chamberOrigin.x++;
+						chamberOffset.x = chamberOffset.x >= chamberMaxX ? chamberMaxX : chamberOffset.x + 1;
+						++dist;
+						blockOrigin = block.getBounds(this).topLeft.add(chamberOffset);
 					}
-					subject.x = subjectOrigin.x;
+					chamber.x += chamberOffset.x;
 					
 					break
 			}
 			
 			return false;
+		}
+		
+		private function blockImportant(block:Block):Boolean
+		{
+			var importantRect:Rectangle = subject.skin.getBounds(this);
+			switch(subject.direction)
+			{
+				case TestSubject.UP:
+					importantRect.height = 70;
+					importantRect.x += 25;
+					importantRect.width -= 50;
+					break;
+				
+				case TestSubject.DOWN:
+					importantRect.y = importantRect.height - 70;
+					importantRect.height = 70;
+					importantRect.x += 25;
+					importantRect.width -= 50;
+					break;
+				
+				case TestSubject.RIGHT:
+					importantRect.x = importantRect.width - 70;
+					importantRect.width = 70;
+					importantRect.y += 25;
+					importantRect.height -= 50;
+					break;
+				
+				case TestSubject.LEFT:
+					importantRect.width = 70;
+					importantRect.y += 25;
+					importantRect.height -= 50;
+					break;
+			}
+			
+			return importantRect.intersects(block.getBounds(this));
 		}
 		
 		private function moveField(direction:String, speed:Number):void
@@ -427,7 +495,7 @@ package com.leisure.energyjam
 				case TestSubject.UP:
 					if(chamber.y < chamberMaxY && subjectCenteredVert)
 					{
-						if( chamber.y + speed <= chamberMaxY)
+						if( chamber.y + speed < chamberMaxY)
 						{
 							chamber.y += speed;
 						}else{
@@ -454,7 +522,7 @@ package com.leisure.energyjam
 								}
 							}
 						}else{
-							if(subject.y >= speed)
+							if(subject.y + speed > subjectMinY)
 							{
 								subject.y -= speed;
 							}else{
@@ -471,7 +539,7 @@ package com.leisure.energyjam
 						{
 							chamber.y -= speed;
 						}else{
-							chamber.y = -(chamber.height - HEIGHT);
+							chamber.y = chamberMinY;
 						}
 					}else if(subject.y != subjectMaxY)
 					{
@@ -494,7 +562,7 @@ package com.leisure.energyjam
 								}
 							}
 						}else{
-							if(HEIGHT - subject.y >= speed)
+							if(subject.y + speed <= subjectMaxY)
 							{
 								subject.y += speed;
 							}else{
@@ -511,7 +579,7 @@ package com.leisure.energyjam
 						{
 							chamber.x -= speed;
 						}else{
-							chamber.x = -(chamber.height - HEIGHT);
+							chamber.x = chamberMinX;
 						}
 					}else if(subject.x != subjectMaxX)
 					{
@@ -534,7 +602,7 @@ package com.leisure.energyjam
 								}
 							}
 						}else{
-							if(WIDTH - subject.x >= speed)
+							if(subject.x + speed > subjectMaxX)
 							{
 								subject.x += speed;
 							}else{
@@ -1592,7 +1660,7 @@ package com.leisure.energyjam
 		
 		protected function get subjectMaxX():Number
 		{
-			return WIDTH - subject.width;
+			return WIDTH - subject.skin.width - subject.skin.x;
 		}
 		
 		protected function get subjectMinX():Number
@@ -1602,7 +1670,7 @@ package com.leisure.energyjam
 		
 		protected function get subjectMaxY():Number
 		{
-			return HEIGHT - subject.height;
+			return HEIGHT - subject.skin.height - subject.skin.y;
 		}
 		
 		protected function get subjectMinY():Number

@@ -60,8 +60,14 @@ package com.leisure.energyjam.room
 			var block:Block;
 			for(var i:int=indexOrigin.x;i<indexOrigin.x+indicesLong;++i)
 			{
+				if(i>=125)
+					break;
+				
 				for(var j:int=indexOrigin.y;j<indexOrigin.y+indicesHigh;++j)
 				{
+					if(j>=125)
+						break;
+					
 					block = blocks[i][j];
 					if(block != null)
 					{
