@@ -188,7 +188,6 @@ package com.leisure.energyjam.person
 			_direction = NONE;
 			speed = 40;
 			energy = MAX_ENERGY;
-			
 			drawDirection();
 			initYells();
 			startYourEngines();

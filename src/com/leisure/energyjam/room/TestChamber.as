@@ -124,7 +124,7 @@ package com.leisure.energyjam.room
 			loc.y+=1;
 			addBlockAt(new Block(Block.BLACK),loc.x,loc.y);
 			loc.y+=1;
-			addBlockAt(new Block(Block.WHITE),loc.x,loc.y);
+//			addBlockAt(new Block(Block.WHITE),loc.x,loc.y);
 			loc.y+=1;
 			addBlockAt(new Block(Block.BLACK),loc.x,loc.y);
 		}
@@ -137,7 +137,7 @@ package com.leisure.energyjam.room
 			//middle of chunk
 			loc.x+=2;
 			loc.y+=2;
-			addBlockAt(new Block(Block.WHITE),loc.x,loc.y);
+//			addBlockAt(new Block(Block.WHITE),loc.x,loc.y);
 		}
 		
 		public function createBigPlus(loc:Point):void
@@ -177,7 +177,7 @@ package com.leisure.energyjam.room
 				}
 			}
 			
-			addBlockAt(new Block(Block.WHITE),loc.x+2,loc.y+2);
+//			addBlockAt(new Block(Block.WHITE),loc.x+2,loc.y+2);
 		}
 		
 		public function clearBlockOfBlocks(rect:Rectangle):void

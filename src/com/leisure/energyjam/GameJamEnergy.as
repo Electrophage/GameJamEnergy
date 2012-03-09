@@ -354,7 +354,10 @@ package com.leisure.energyjam
 							continue;
 						}else/* if(!firstCall)*/
 						{
-							return subjectEvenWithBlock(block);
+							subject.energy -= block.energyChange;
+							breakingBlocks.push(block);
+							chamber.removeBlock(block);
+							continue;
 						}
 					}
 				}
